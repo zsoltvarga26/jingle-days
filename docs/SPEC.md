@@ -480,7 +480,7 @@ docs/
 
 ## Telepítés: GitHub és Netlify
 
-Az alkalmazás statikus oldalként megy ki: a Netlify minden `main` ágra történő push után lefuttatja a `yarn build` parancsot, és a `dist` mappát teszi közzé. Szerver vagy adatbázis nem kell, mert minden adat a böngészőben marad.
+Az alkalmazás statikus oldalként megy ki: a Netlify minden `master` ágra történő push után lefuttatja a `yarn build` parancsot, és a `dist` mappát teszi közzé. Szerver vagy adatbázis nem kell, mert minden adat a böngészőben marad.
 
 ```toml
 # netlify.toml
@@ -503,7 +503,7 @@ Az alkalmazás statikus oldalként megy ki: a Netlify minden `main` ágra tört�
 A Netlify a `yarn.lock` alapján magától Yarnnal telepíti a függőségeket, és a `package.json` `packageManager` mezőjéből tudja, melyik Yarn verziót használja.
 
 1. Hozz létre egy GitHub repository-t, és töltsd fel a projektet (`git init`, `git add .`, `git commit`, `git push`).
-2. A Netlifyon: **Add new site → Import an existing project → GitHub**, majd válaszd ki a repository-t.
+2. A Netlifyon: **Add new site → Import an existing project → GitHub**, majd válaszd ki a repository-t. A „Production branch” legyen `master`.
 3. A build-beállításokat a `netlify.toml` adja, kézzel nem kell megadni.
 4. Az éles (production) környezetben a `VITE_UNLOCK_ALL` ne legyen beállítva, hogy a dátumzár működjön. Az előnézeti környezetben a fenti `netlify.toml` állítja be, a Netlify felületén nem kell megadni.
 5. Egyedi domain a **Domain management** alatt köthető be; a HTTPS-t a Netlify automatikusan intézi.
