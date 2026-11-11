@@ -1,0 +1,13 @@
+# A repóban és a munkafában is LF sorvég, minden gépen.
+* text=auto eol=lf
+
+# Bináris fájlok: nincs sorvég-átalakítás.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.gz binary
