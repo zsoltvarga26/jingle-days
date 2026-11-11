@@ -1,0 +1,16 @@
+/* 0. fázis: csak az alapok. A színtokenek (tokens.css) és a protótípus stílusai az 1. fázisban jönnek. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Baloo 2', Nunito, 'Trebuchet MS', system-ui, sans-serif;
+}
+
+main {
+  padding: 2rem 1rem;
+  text-align: center;
+}
