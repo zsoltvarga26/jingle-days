@@ -1,0 +1,38 @@
+.snow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.snow i {
+  position: absolute;
+  top: -12px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: var(--flake);
+  opacity: 0.85;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  animation: fall var(--d) linear var(--w) infinite;
+}
+
+@keyframes fall {
+  0% {
+    transform: translate(0, -10vh);
+  }
+  50% {
+    transform: translate(24px, 50vh);
+  }
+  100% {
+    transform: translate(-12px, 110vh);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snow i {
+    display: none;
+  }
+}

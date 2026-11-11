@@ -1,0 +1,35 @@
+.group {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+
+.pill {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  min-width: 2.9em;
+  min-height: 2.2em;
+  padding: 0.2em 0.7em 0.05em;
+  border: 2px solid var(--pine);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.pill[aria-pressed='true'] {
+  background: var(--pine);
+  color: var(--snow);
+}
+
+@media (hover: hover) {
+  .pill[aria-pressed='false']:hover {
+    background: var(--bg-2);
+  }
+}
+
+.pill:focus-visible {
+  outline: 4px solid var(--gold);
+  outline-offset: 3px;
+}

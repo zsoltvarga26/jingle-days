@@ -60,14 +60,14 @@ Külön figyelni:
 
 **Kész, ha:**
 
-- [ ] A kalendárium a protótípussal egymás mellé téve nem különböztethető meg (világos és sötét módban, 360 px és 1280 px szélességen).
-- [ ] `?date=2026-11-20`: minden ajtó zárolt, a banner „még 11 nap”-ot ír; kattintásra rázkódás és üzenet.
-- [ ] `?date=2026-12-10`: az 1–10. ajtó nyitható, a 11–24. zárolt; `?date=2026-12-26`: mind nyitható, a visszaszámláló helyén üdvözlet.
-- [ ] Megnyitott ajtó frissítés után is nyitva van; a localStorage kézi elrontása után az oldal üres mentéssel betölt, nem omlik össze.
-- [ ] Nyelvváltásra minden látható szöveg vált, a `<html lang>` és a fülcím is; a választás frissítés után megmarad.
-- [ ] Tabbal minden ajtó elérhető, Enterrel/szóközzel nyitható, a fókuszkeret látszik.
-- [ ] `prefers-reduced-motion` mellett nincs hóesés és belépő animáció.
-- [ ] Tesztek: `dates` (határesetek: nov. 30. 23:59, dec. 1. 00:00, dec. 24., dec. 25.), reducer, `storage` (hibás JSON, ismeretlen verzió), szótárkulcsok egyezése.
+- [ ] A kalendárium a protótípussal egymás mellé téve nem különböztethető meg (világos és sötét módban, 360 px és 1280 px szélességen). *Géppel összevetve: a rács, a tábla, a cím és az ajtók színei, mintái egyeznek; a szemrevételezés még hátravan. Szándékos eltérés: nyelvváltó a fejlécben, halványabb zárolt ajtók.*
+- [x] `?date=2026-11-20`: minden ajtó zárolt, a banner „még 11 nap”-ot ír; kattintásra rázkódás és üzenet.
+- [x] `?date=2026-12-10`: az 1–10. ajtó nyitható, a 11–24. zárolt; `?date=2026-12-26`: mind nyitható, a visszaszámláló helyén üdvözlet.
+- [x] Megnyitott ajtó frissítés után is nyitva van; a localStorage kézi elrontása után az oldal üres mentéssel betölt, nem omlik össze.
+- [x] Nyelvváltásra minden látható szöveg vált, a `<html lang>` és a fülcím is; a választás frissítés után megmarad.
+- [x] Tabbal minden ajtó elérhető, Enterrel/szóközzel nyitható, a fókuszkeret látszik.
+- [ ] `prefers-reduced-motion` mellett nincs hóesés és belépő animáció. *A CSS megvan, de böngészőben még nincs kipróbálva.*
+- [x] Tesztek: `dates` (határesetek: nov. 30. 23:59, dec. 1. 00:00, dec. 24., dec. 25.), reducer, `storage` (hibás JSON, ismeretlen verzió), szótárkulcsok egyezése.
 
 ## 2. fázis – Napi dialógus és kvíz
 

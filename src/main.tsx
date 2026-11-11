@@ -6,6 +6,7 @@ import '@fontsource/baloo-2/latin-800.css'
 import '@fontsource/baloo-2/latin-ext-500.css'
 import '@fontsource/baloo-2/latin-ext-700.css'
 import '@fontsource/baloo-2/latin-ext-800.css'
+import './styles/tokens.css'
 import './styles/global.css'
 import App from './App'
 

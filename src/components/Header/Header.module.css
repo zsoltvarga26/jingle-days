@@ -1,0 +1,62 @@
+.header {
+  position: relative;
+  text-align: center;
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* Keskeny képernyőn külön sor a cím fölött, szélesen a jobb felső sarokban lebeg,
+   így a cím ugyanott marad, ahol a protótípusban. */
+.tools {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 720px) {
+  .tools {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+  }
+}
+
+.title {
+  margin: 0;
+  font-weight: 800;
+  font-size: clamp(2.6rem, 9vw, 5.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--red);
+  text-shadow:
+    3px 3px 0 var(--gold),
+    6px 6px 0 var(--pine);
+  animation: wobble 4s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+.lead {
+  margin: 1.2rem auto 0;
+  max-width: 34ch;
+  font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+  line-height: 1.4;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title {
+    animation: none;
+  }
+}

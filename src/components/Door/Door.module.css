@@ -1,0 +1,408 @@
+/* Egy ajtó – a protótípus .day blokkja, gombként. */
+.day {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  perspective: 900px;
+  cursor: pointer;
+  border-radius: var(--radius-door);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+
+  /* Betöltéskori belépés: az ajtók egymás után „lepottyannak”. */
+  animation: drop 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  animation-delay: calc(var(--i) * 45ms);
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.normal {
+  grid-column: span 1;
+}
+.wide {
+  grid-column: span 2;
+}
+.tall {
+  grid-row: span 2;
+}
+.big {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.raised {
+  z-index: 3;
+}
+
+/* ---------- Ami az ajtó mögött van ---------- */
+.inside {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-door);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(245, 190, 58, 0.35), transparent 65%), var(--inside);
+  box-shadow: inset 0 4px 14px rgba(0, 0, 0, 0.25);
+  display: grid;
+  place-items: center;
+  color: var(--inside-ink);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 6vw, 3.4rem);
+  line-height: 1;
+  overflow: hidden;
+}
+
+.big .inside {
+  font-size: clamp(4.5rem, 12vw, 7rem);
+}
+
+.inside span {
+  transform: scale(0.3);
+  opacity: 0;
+}
+
+.open .inside span {
+  animation: pop 0.6s cubic-bezier(0.3, 1.6, 0.5, 1) 0.25s forwards;
+}
+
+@keyframes pop {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Csillámok nyitáskor */
+.inside::before,
+.inside::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--gold);
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  opacity: 0;
+}
+
+.inside::before {
+  top: 18%;
+  left: 20%;
+}
+
+.inside::after {
+  bottom: 20%;
+  right: 18%;
+  width: 14px;
+  height: 14px;
+}
+
+.open .inside::before {
+  animation: twinkle 1.8s ease-in-out 0.5s infinite;
+}
+
+.open .inside::after {
+  animation: twinkle 1.8s ease-in-out 1.1s infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4) rotate(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(45deg);
+  }
+}
+
+/* ---------- Az ajtó ---------- */
+.door {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.5, 0, 0.2, 1.2);
+  border-radius: var(--radius-door);
+}
+
+.front,
+.back {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-door);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.front {
+  background-color: var(--c);
+  background-image: var(--p);
+  background-size: var(--ps, 22px 22px);
+  box-shadow:
+    0 6px 0 var(--cd),
+    0 10px 18px var(--shadow);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 0.55rem 0.7rem;
+  overflow: hidden;
+}
+
+/* Szalag */
+.front::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(50% - 7px),
+      var(--r) calc(50% - 7px),
+      var(--r) calc(50% + 7px),
+      transparent calc(50% + 7px)
+    ),
+    linear-gradient(
+      0deg,
+      transparent calc(50% - 7px),
+      var(--r) calc(50% - 7px),
+      var(--r) calc(50% + 7px),
+      transparent calc(50% + 7px)
+    );
+  opacity: var(--ribbon, 0);
+}
+
+/* Kilincs */
+.front::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 2px 0 var(--gold-dark);
+}
+
+.num {
+  position: relative;
+  z-index: 1;
+  min-width: 2.1em;
+  padding: 0.1em 0.45em 0;
+  border-radius: 999px;
+  background: var(--snow);
+  color: var(--red-dark);
+  font-weight: 800;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+}
+
+.big .num {
+  font-size: 1.6rem;
+}
+
+.back {
+  transform: rotateY(180deg);
+  background: var(--cd);
+  box-shadow: inset -6px 0 0 rgba(0, 0, 0, 0.15);
+}
+
+/* ---------- Ajtószínek és csomagolópapír-minták ---------- */
+[data-color='red'] {
+  --c: var(--red);
+  --cd: var(--red-dark);
+  --r: var(--gold);
+}
+[data-color='gold'] {
+  --c: var(--gold);
+  --cd: var(--gold-dark);
+  --r: var(--red);
+}
+[data-color='snow'] {
+  --c: var(--snow);
+  --cd: var(--snow-dark);
+  --r: var(--red);
+}
+[data-color='pink'] {
+  --c: var(--pink);
+  --cd: var(--pink-dark);
+  --r: var(--pine);
+}
+[data-color='green'] {
+  --c: var(--green);
+  --cd: var(--green-dark);
+  --r: var(--gold);
+}
+
+[data-pattern='dots'] {
+  --p: radial-gradient(circle, rgba(255, 255, 255, 0.55) 3px, transparent 3.5px);
+  --ps: 20px 20px;
+}
+[data-pattern='stripes'] {
+  --p: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.35) 0 8px, transparent 8px 18px);
+  --ps: auto;
+}
+[data-pattern='candy'] {
+  --p: repeating-linear-gradient(-45deg, rgba(226, 56, 75, 0.55) 0 9px, transparent 9px 20px);
+  --ps: auto;
+}
+[data-pattern='check'] {
+  --p: conic-gradient(
+    rgba(255, 255, 255, 0.25) 25%,
+    transparent 0 50%,
+    rgba(255, 255, 255, 0.25) 0 75%,
+    transparent 0
+  );
+  --ps: 24px 24px;
+}
+[data-pattern='plain'] {
+  --p: none;
+}
+[data-ribbon] {
+  --ribbon: 1;
+}
+
+/* ---------- Állapotok és interakciók ---------- */
+@media (hover: hover) {
+  .closed:hover .door {
+    transform: rotateY(-14deg);
+  }
+}
+
+.open .door {
+  transform: rotateY(-112deg);
+}
+
+.open .front::after {
+  background: var(--snow);
+}
+
+.day:focus-visible .front {
+  outline: 4px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* Nyitott ajtónál az előlap elfordult, a fókuszkeret a belső felületre kerül. */
+.open:focus-visible .inside {
+  outline: 4px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* Zárolt: enyhén halvány, nem billen. */
+.locked {
+  cursor: default;
+}
+
+.locked .front {
+  filter: saturate(0.7) brightness(0.92);
+  opacity: 0.82;
+}
+
+.shake {
+  animation: shake 0.45s ease-in-out;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0);
+  }
+  20% {
+    transform: translateX(-5px) rotate(-1.5deg);
+  }
+  40% {
+    transform: translateX(5px) rotate(1.5deg);
+  }
+  60% {
+    transform: translateX(-4px) rotate(-1deg);
+  }
+  80% {
+    transform: translateX(3px) rotate(0.5deg);
+  }
+}
+
+/* A betöltéskor már nyitott ajtó animáció nélkül áll nyitva. */
+.instant .door {
+  transition: none;
+}
+
+.instant.open .inside span {
+  animation: none;
+  transform: none;
+  opacity: 1;
+}
+
+/* ---------- Buborék a zárolt ajtón ---------- */
+.bubble {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 5;
+  width: max-content;
+  max-width: calc(100% - 10px);
+  transform: translate(-50%, -50%);
+  padding: 0.35em 0.75em 0.2em;
+  border-radius: 14px;
+  background: var(--snow);
+  color: var(--red-dark);
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1.15;
+  text-align: center;
+  box-shadow:
+    0 4px 0 var(--red),
+    0 8px 16px var(--shadow);
+  pointer-events: none;
+  animation: bubble-in 0.2s ease-out;
+}
+
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .day {
+    animation: none;
+  }
+  .door {
+    transition-duration: 0.01ms;
+  }
+  .inside span {
+    transform: none;
+    opacity: 1;
+  }
+  .open .inside span,
+  .open .inside::before,
+  .open .inside::after,
+  .shake,
+  .bubble {
+    animation: none;
+  }
+}

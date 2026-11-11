@@ -1,0 +1,45 @@
+/**
+ * Magyar felületi szövegek. Az en.ts-nek ugyanezekkel a kulcsokkal kell rendelkeznie.
+ * A `.one` / `.other` végű kulcspárok többes számú alakok (lásd a tn() függvényt).
+ */
+export const hu = {
+  'doc.title': 'Advent 2026 – adventi kalendárium',
+
+  'header.title': 'Advent 2026',
+  'header.lead': 'Minden nap egy új ablak. Kattints rá, és nézd meg, mi lapul mögötte!',
+
+  'lang.switch': 'Nyelv',
+  'lang.hu': 'Magyar',
+  'lang.en': 'Angol',
+
+  'countdown.until': 'Szentestéig még',
+  'countdown.days.one': 'nap',
+  'countdown.days.other': 'nap',
+  'countdown.hours.one': 'óra',
+  'countdown.hours.other': 'óra',
+  'countdown.minutes.one': 'perc',
+  'countdown.minutes.other': 'perc',
+  'countdown.seconds.one': 'másodperc',
+  'countdown.seconds.other': 'másodperc',
+  'countdown.merry': 'Boldog karácsonyt! 🎄',
+
+  'banner.opens.one': 'Az első ablak december 1-jén nyílik – már csak {n} nap!',
+  'banner.opens.other': 'Az első ablak december 1-jén nyílik – még {n} nap!',
+
+  'calendar.label': 'Adventi kalendárium, 24 ablak',
+  'door.label': '{n}. ablak',
+  'door.aria.closed': '{n}. ablak, zárva – nyisd ki!',
+  'door.aria.open': '{n}. ablak, nyitva',
+  'door.aria.locked': '{n}. ablak, zárolt – {when}',
+  'door.opensTomorrow': 'Holnap nyílik',
+  'door.opensIn.one': '{n} nap múlva nyílik',
+  'door.opensIn.other': '{n} nap múlva nyílik',
+
+  'progress.opened': '{n} / 24 ablak nyitva',
+  'progress.reset': 'Előrehaladás törlése',
+  'progress.reset.confirm': 'Biztosan törlöd az összes megnyitott ablakot?',
+  'progress.reset.yes': 'Igen, törlöm',
+  'progress.reset.no': 'Mégse',
+} as const
+
+export type MessageKey = keyof typeof hu
