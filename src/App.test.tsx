@@ -1,6 +1,7 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import App from './App'
+import { getDay } from './content/days'
 import { SAVE_KEY, SETTINGS_KEY } from './state/storage'
 
 function renderAt(date: Date, lang: 'hu' | 'en' = 'hu') {
@@ -99,6 +100,91 @@ describe('App', () => {
     renderAt(new Date(2026, 10, 20, 12), 'hu')
     expect(document.documentElement.lang).toBe('en')
     expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).lang).toBe('hu')
+  })
+
+  describe('napi dialógus', () => {
+    const q = getDay(2).quiz
+    const right = (i: number) => q[i].options[q[i].correctIndex].hu
+    const openDialog = (day: number) => {
+      fireEvent.click(door(day))
+      act(() => {
+        vi.advanceTimersByTime(1000)
+      })
+      return screen.getByRole('dialog')
+    }
+
+    test('az ajtó kinyitása után megnyílik a kvízzel és a lépésjelzővel', () => {
+      renderAt(new Date(2026, 11, 10, 9))
+      fireEvent.click(door(2))
+      // A dialógus megvárja, amíg az ajtó kitárul.
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+
+      act(() => {
+        vi.advanceTimersByTime(1000)
+      })
+      const dialog = screen.getByRole('dialog')
+      expect(within(dialog).getByRole('heading', { level: 2 })).toHaveTextContent('December 2.')
+      expect(within(dialog).getByText('Kvíz')).toHaveAttribute('aria-current', 'step')
+      expect(within(dialog).getByRole('heading', { level: 3 })).toHaveTextContent(q[0].question.hu)
+    })
+
+    test('kihagyás a 2. kérdésnél: a válasz megmarad, az ajtón pötty, a folytatás a 2. kérdésre visz', () => {
+      renderAt(new Date(2026, 11, 10, 9))
+      const dialog = openDialog(2)
+      fireEvent.click(within(dialog).getByRole('button', { name: right(0) }))
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Következő kérdés' }))
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Kvíz kihagyása' }))
+
+      // A kihagyás után az összefoglaló jön.
+      expect(within(dialog).getByText('1 / 3 helyes')).toBeInTheDocument()
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Bezárom' }))
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(door(2)).toHaveAccessibleName('2. ablak, nyitva – van még kihagyott rész')
+      expect(door(2)).toHaveFocus()
+
+      // Nyitott ajtóra kattintva azonnal az összefoglaló nyílik.
+      fireEvent.click(door(2))
+      const again = screen.getByRole('dialog')
+      fireEvent.click(within(again).getByRole('button', { name: 'Folytatom a kvízt' }))
+      expect(within(again).getByRole('heading', { level: 3 })).toHaveTextContent(q[1].question.hu)
+      expect(JSON.parse(window.localStorage.getItem(SAVE_KEY)!).days[2].quiz).toEqual({
+        answers: [q[0].correctIndex, null, null],
+        status: 'pending',
+      })
+    })
+
+    test('végigjátszott kvíz után nincs folytatás gomb és nincs pötty', () => {
+      renderAt(new Date(2026, 11, 10, 9))
+      const dialog = openDialog(2)
+      q.forEach((_, i) => {
+        fireEvent.click(within(dialog).getByRole('button', { name: right(i) }))
+        fireEvent.click(
+          within(dialog).getByRole('button', { name: i < q.length - 1 ? 'Következő kérdés' : 'Tovább' }),
+        )
+      })
+      expect(within(dialog).getByText('3 / 3 helyes')).toBeInTheDocument()
+      expect(within(dialog).queryByRole('button', { name: 'Folytatom a kvízt' })).not.toBeInTheDocument()
+
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Bezárás' }))
+      expect(door(2)).toHaveAccessibleName('2. ablak, nyitva')
+    })
+
+    test('a 24. napon 5 kérdés van', () => {
+      renderAt(new Date(2026, 11, 24, 9))
+      const dialog = openDialog(24)
+      expect(within(dialog).getByText('1 / 5. kérdés')).toBeInTheDocument()
+    })
+
+    test('nyelvváltás nyitott dialógus közben nem veszít el állapotot', () => {
+      renderAt(new Date(2026, 11, 10, 9))
+      const dialog = openDialog(2)
+      fireEvent.click(within(dialog).getByRole('button', { name: right(0) }))
+      fireEvent.click(screen.getByRole('button', { name: 'Angol' }))
+
+      expect(within(dialog).getByRole('heading', { level: 3 })).toHaveTextContent(q[0].question.en)
+      expect(within(dialog).getByText('Correct!')).toBeInTheDocument()
+      expect(within(dialog).getByRole('button', { name: 'Next question' })).toBeInTheDocument()
+    })
   })
 
   test('a visszaállítás megerősítést kér, és a nyelvet nem állítja vissza', () => {

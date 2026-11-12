@@ -88,6 +88,20 @@
   }
 }
 
+/* Arany pötty: maradt átugrott rész a napban. */
+.dot {
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow:
+    0 2px 0 var(--gold-dark),
+    0 0 0 3px var(--inside);
+}
+
 /* Csillámok nyitáskor */
 .inside::before,
 .inside::after {

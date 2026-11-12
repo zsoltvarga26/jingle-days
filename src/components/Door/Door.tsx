@@ -14,6 +14,8 @@ export interface DoorProps {
   ariaLabel: string
   /** Zárolt ajtón kattintáskor megjelenő üzenet. */
   lockedMessage?: string
+  /** Nyitott ajtón: maradt-e átugrott rész (kis arany pötty jelzi). */
+  hasSkipped?: boolean
   /** Zárt (nyitható) ajtóra kattintáskor. */
   onOpen: (day: number) => void
   /** Már nyitott ajtóra kattintáskor. */
@@ -30,6 +32,7 @@ export function Door({
   status,
   ariaLabel,
   lockedMessage,
+  hasSkipped = false,
   onOpen,
   onRevisit,
   onLockedClick,
@@ -88,6 +91,7 @@ export function Door({
     >
       <span className={styles.inside} aria-hidden="true">
         <span>{day}</span>
+        {status === 'open' && hasSkipped && <i className={styles.dot} />}
       </span>
       <span
         // A kulcs váltása újraindítja a rázkódás animációját.

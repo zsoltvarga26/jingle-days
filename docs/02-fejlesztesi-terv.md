@@ -82,14 +82,14 @@ Külön figyelni:
 
 **Kész, ha:**
 
-- [ ] Egy kérdés látszik egyszerre; választás után a helyes zöld, a hibás választott piros, megjelenik az `explanation` (ha van) és a „Következő kérdés”.
-- [ ] Megválaszolt kérdésre nem lehet újra kattintani; frissítés után a kvíz ugyanott folytatódik.
-- [ ] „Kvíz kihagyása” a 2. kérdésnél: az 1. válasz megmarad; az összefoglalóban „Folytatom”, ami a 2. kérdésre visz.
-- [ ] Ugyanaz a kérdés minden betöltéskor ugyanabban a sorrendben mutatja a válaszokat; egy napon belül a helyes válasz nem mindig ugyanott van.
-- [ ] Esc és a háttérre kattintás bezár (**C2**); bezárás után a fókusz visszakerül az ajtóra.
-- [ ] Nyelvváltás nyitott dialógus közben nem veszít el állapotot.
-- [ ] 360 px szélességen a dialógus alsó lap, a válaszgombok kényelmesen megnyomhatók (legalább 44 px magasak).
-- [ ] Tesztek: `shuffle` (determinisztikus, permutáció), reducer (`ANSWER_QUESTION`, `SKIP_QUIZ`, `RESUME_STEP`), tartalomteszt (lásd a [tartalom-útmutatót](03-tartalom-utmutato.md)).
+- [x] Egy kérdés látszik egyszerre; választás után a helyes zöld, a hibás választott piros, megjelenik az `explanation` (ha van) és a „Következő kérdés”.
+- [x] Megválaszolt kérdésre nem lehet újra kattintani; frissítés után a kvíz ugyanott folytatódik.
+- [x] „Kvíz kihagyása” a 2. kérdésnél: az 1. válasz megmarad; az összefoglalóban „Folytatom”, ami a 2. kérdésre visz.
+- [x] Ugyanaz a kérdés minden betöltéskor ugyanabban a sorrendben mutatja a válaszokat; egy napon belül a helyes válasz nem mindig ugyanott van.
+- [x] Esc és a háttérre kattintás bezár (**C2**); bezárás után a fókusz visszakerül az ajtóra.
+- [x] Nyelvváltás nyitott dialógus közben nem veszít el állapotot.
+- [x] 360 px szélességen a dialógus alsó lap, a válaszgombok kényelmesen megnyomhatók (legalább 44 px magasak).
+- [x] Tesztek: `shuffle` (determinisztikus, permutáció), reducer (`ANSWER_QUESTION`, `SKIP_QUIZ`, `RESUME_STEP`), tartalomteszt (lásd a [tartalom-útmutatót](03-tartalom-utmutato.md)).
 
 ## 3. fázis – Emoji-rejtvény és zárás
 

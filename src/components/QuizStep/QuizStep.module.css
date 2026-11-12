@@ -1,0 +1,218 @@
+/* A dialógus felülete mindig világos (snow), ezért itt a szövegszínek sötét módban sem változnak. */
+.quiz {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.counter {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--on-snow-soft);
+}
+
+.dots {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.dots i {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  border: 2px solid var(--snow-dark);
+  background: transparent;
+}
+
+.dots i[data-state='current'] {
+  border-color: var(--gold-dark);
+  background: var(--gold);
+}
+
+.dots i[data-state='right'] {
+  border-color: var(--green-dark);
+  background: var(--green);
+}
+
+.dots i[data-state='wrong'] {
+  border-color: var(--red-dark);
+  background: var(--red);
+}
+
+.question {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(1.2rem, 3.6vw, 1.45rem);
+  line-height: 1.25;
+  color: var(--pine-dark);
+  outline: none;
+}
+
+.options {
+  display: grid;
+  gap: 0.6rem;
+}
+
+/* A válaszgombok a pill alakú számtáblák formáját veszik át. */
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.5em 1.2em 0.35em;
+  border: 2px solid var(--pine);
+  border-radius: 999px;
+  background: var(--snow);
+  color: var(--pine-dark);
+  font: inherit;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--snow-dark);
+}
+
+@media (hover: hover) {
+  .option[data-state='idle']:hover {
+    background: color-mix(in srgb, var(--gold) 28%, var(--snow));
+  }
+}
+
+.option:focus-visible {
+  outline: 4px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.option[aria-disabled='true'] {
+  cursor: default;
+}
+
+.option[data-state='right'] {
+  border-color: var(--green-dark);
+  background: color-mix(in srgb, var(--green) 28%, var(--snow));
+  box-shadow: 0 3px 0 var(--green-dark);
+}
+
+.option[data-state='wrong'] {
+  border-color: var(--red);
+  background: color-mix(in srgb, var(--red) 16%, var(--snow));
+  color: var(--red-dark);
+  box-shadow: 0 3px 0 var(--red);
+  animation: shake 0.4s ease-in-out;
+}
+
+.option[data-state='rest'] {
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.mark {
+  font-weight: 800;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+}
+
+.feedback {
+  min-height: 1.6rem;
+}
+
+.feedback p {
+  margin: 0;
+}
+
+.right,
+.wrong {
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.right {
+  color: var(--green-dark);
+}
+
+.wrong {
+  color: var(--red-dark);
+}
+
+.explanation {
+  margin-top: 0.3rem !important;
+  color: var(--on-snow-soft);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.primary,
+.secondary {
+  font: inherit;
+  min-height: 2.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.primary {
+  padding: 0.5em 1.5em 0.35em;
+  border: 0;
+  background: var(--pine);
+  color: var(--snow);
+  font-weight: 700;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 0 var(--pine-dark);
+}
+
+.secondary {
+  margin-left: auto;
+  padding: 0.4em 1.1em 0.25em;
+  border: 2px solid transparent;
+  background: transparent;
+  color: var(--on-snow-soft);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 4px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .option[data-state='wrong'] {
+    animation: none;
+  }
+}

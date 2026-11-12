@@ -3,18 +3,21 @@ import { stepCounts } from '../../content/days'
 import type { DoorLayout } from '../../content/layout'
 import { useI18n } from '../../i18n/useI18n'
 import { daysUntil, isDayUnlocked, isUnlockAll, unlockDate, useToday } from '../../lib/dates'
+import { hasSkippedStep } from '../../state/progress'
 import { useProgress } from '../../state/useProgress'
 import { Door, type DoorStatus } from '../Door/Door'
 import styles from './Calendar.module.css'
 
 export interface CalendarProps {
   layout: readonly DoorLayout[]
-  /** Már nyitott ajtóra kattintáskor (a 2. fázistól a napi dialógust nyitja). */
+  /** Egy ajtó első kinyitása után (a napi játék indul). */
+  onOpened?: (day: number) => void
+  /** Már nyitott ajtóra kattintáskor (összefoglaló). */
   onRevisit?: (day: number) => void
 }
 
 /** A 24 ajtó rácsa a megadott sorrendben és méretekkel. */
-export function Calendar({ layout, onRevisit }: CalendarProps) {
+export function Calendar({ layout, onOpened, onRevisit }: CalendarProps) {
   const { t, tn } = useI18n()
   const { state, dispatch } = useProgress()
   const today = useToday()
@@ -42,6 +45,7 @@ export function Calendar({ layout, onRevisit }: CalendarProps) {
       puzzleCount: counts.emoji,
       at: new Date().toISOString(),
     })
+    onOpened?.(day)
   }
 
   return (
@@ -49,10 +53,14 @@ export function Calendar({ layout, onRevisit }: CalendarProps) {
       {layout.map((door, index) => {
         const status = statusOf(door.day)
         const message = status === 'locked' ? lockedMessage(door.day) : undefined
+        const progress = state.days[door.day]
+        const skipped = progress ? hasSkippedStep(progress) : false
         const ariaLabel =
           status === 'locked'
             ? t('door.aria.locked', { n: door.day, when: message ?? '' })
-            : t(status === 'open' ? 'door.aria.open' : 'door.aria.closed', { n: door.day })
+            : status === 'closed'
+              ? t('door.aria.closed', { n: door.day })
+              : t(skipped ? 'door.aria.openSkipped' : 'door.aria.open', { n: door.day })
 
         return (
           <Door
@@ -62,6 +70,7 @@ export function Calendar({ layout, onRevisit }: CalendarProps) {
             status={status}
             ariaLabel={ariaLabel}
             lockedMessage={message}
+            hasSkipped={skipped}
             onOpen={open}
             onRevisit={onRevisit}
             onLockedClick={() => setAnnouncement(`${t('door.label', { n: door.day })}: ${message}`)}
