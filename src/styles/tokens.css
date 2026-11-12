@@ -23,6 +23,16 @@
   --shadow: rgba(13, 74, 54, 0.22);
   --flake: #ffffff;
 
+  /* A fa és a díszpaletta. Ezek SVG-attribútumként is kikerülnek (a megosztókártya miatt),
+     ezért a src/components/TreeScene/palette.ts tükrözi őket; egy teszt őrzi az egyezést. */
+  --tree-mid: #258a62;
+  --trunk: #8a5a3c;
+  --gingerbread: #b9783f;
+  --orn-blue: #4a90d9;
+  --orn-blue-dark: #2f6aa8;
+  --orn-silver: #c9d3dc;
+  --orn-silver-dark: #8f9ba6;
+
   --font: 'Baloo 2', 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
   --radius-door: 16px;
   --radius-board: 28px;

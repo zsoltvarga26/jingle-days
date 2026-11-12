@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
-    css: false,
+    // A palettateszt a tokens.css nyers szövegét olvassa (?raw), ehhez a CSS-feldolgozás kell.
+    css: true,
   },
 })

@@ -81,6 +81,11 @@ export const hu = {
   'summary.puzzle.resume': 'Megpróbálom',
   'summary.close': 'Bezárom',
 
+  'tree.title': 'A mi fánk',
+  'tree.label': 'Karácsonyfa, {n} dísszel a 24-ből',
+  'tree.count': '{n} / 24 dísz a fán',
+  'tree.complete': 'Elkészült a fa! Boldog karácsonyt!',
+
   'progress.opened': '{n} / 24 ablak nyitva',
   'progress.points.one': '{n} pont',
   'progress.points.other': '{n} pont',

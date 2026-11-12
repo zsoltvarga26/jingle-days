@@ -116,15 +116,15 @@ Külön figyelni: a színek SVG-attribútumként, `palette` propon át érkezzen
 
 **Kész, ha (4a):**
 
-- [ ] Megnyitott napok díszei teli színnel, a többi szaggatott körvonallal látszik; a számláló stimmel.
-- [ ] Egyik díszhely sem lóg ki a fáról, és nem fedik egymást 360 px szélességen sem.
-- [ ] A visszaállítás megerősítést kér, utána a fa üres, de a nyelv és a hangbeállítás megmarad.
+- [x] Megnyitott napok díszei teli színnel, a többi szaggatott körvonallal látszik; a számláló stimmel.
+- [x] Egyik díszhely sem lóg ki a fáról, és nem fedik egymást 360 px szélességen sem.
+- [x] A visszaállítás megerősítést kér, utána a fa üres, de a nyelv és a hangbeállítás megmarad.
 
 **Kész, ha (4b):**
 
-- [ ] A dialógus bezárása után az oldal a fához görget, az új dísz a helyére esik; félbeszakított napnál ez a következő betöltéskor történik meg (**A1**).
-- [ ] `prefers-reduced-motion` mellett a dísz animáció nélkül jelenik meg.
-- [ ] `?date=2026-12-24` és mind a 24 nap megnyitva: fények és záróüzenet.
+- [x] A dialógus bezárása után az oldal a fához görget, az új dísz a helyére esik; félbeszakított napnál ez a következő betöltéskor történik meg (**A1**).
+- [ ] `prefers-reduced-motion` mellett a dísz animáció nélkül jelenik meg. *A kód és a CSS megvan, de böngészőben még nincs kipróbálva.*
+- [x] `?date=2026-12-24` és mind a 24 nap megnyitva: fények és záróüzenet.
 
 ## 5. fázis – Hang és zene
 

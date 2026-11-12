@@ -36,14 +36,16 @@
   color: var(--pine-dark);
 }
 
-/* Helykitöltő a dísz rajza helyett; a 4. fázisban a valódi dísz kerül ide. */
+/* A megkapott dísz kis képe, zöld korongon, hogy a fehér díszek is látsszanak. */
 .preview {
   flex: none;
-  width: 2.4rem;
-  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--snow) 0 12%, var(--gold) 40%);
-  box-shadow: 0 3px 0 var(--gold-dark);
+  background: var(--green);
+  box-shadow: 0 4px 0 var(--green-dark);
 }
 
 .actions {

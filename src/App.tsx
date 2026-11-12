@@ -6,14 +6,21 @@ import { Header } from './components/Header/Header'
 import { ProgressSummary } from './components/ProgressSummary/ProgressSummary'
 import { Snowfall } from './components/Snowfall/Snowfall'
 import { StartBanner } from './components/StartBanner/StartBanner'
+import { TREE_ID } from './components/TreeScene/geometry'
+import { TreeScene } from './components/TreeScene/TreeScene'
 import { doorLayout } from './content/layout'
 import { I18nProvider } from './i18n/I18nContext'
 import { countdownTarget, firstDoorDate, isBeforeStart, isUnlockAll, useToday } from './lib/dates'
 import { ProgressProvider } from './state/ProgressContext'
+import { useProgress } from './state/useProgress'
 import { SettingsProvider } from './state/SettingsContext'
 
 /** Ennyi idő múlva nyílik a dialógus az ajtó kinyitása után. */
 const DOOR_OPEN_MS = 900
+
+function reducedMotion(): boolean {
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+}
 
 /** Az éppen nyitott napi dialógus: melyik nap, és most nyílt-e ki az ajtó. */
 interface ActiveDay {
@@ -24,28 +31,43 @@ interface ActiveDay {
 function Page() {
   const today = useToday()
   const beforeStart = isBeforeStart(today, isUnlockAll())
+  const { state } = useProgress()
   const [active, setActive] = useState<ActiveDay | null>(null)
+  // A most kinyitott ajtó napja, amíg a dialógusa meg nem nyílik: a dísze addig is vár.
+  const [starting, setStarting] = useState<number | null>(null)
 
   // Az első nyitásnál a dialógus megvárja, amíg az ajtó kitárul (0,8 s az animáció).
   const openTimer = useRef<number | undefined>(undefined)
   useEffect(() => () => window.clearTimeout(openTimer.current), [])
 
   const startDay = (day: number) => {
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+    setStarting(day)
     window.clearTimeout(openTimer.current)
     openTimer.current = window.setTimeout(
       () => setActive({ day, entry: 'fresh' }),
-      reducedMotion ? 0 : DOOR_OPEN_MS,
+      reducedMotion() ? 0 : DOOR_OPEN_MS,
     )
   }
 
   const closeDialog = () => {
     const day = active?.day
     setActive(null)
+    setStarting(null)
+    if (day === undefined) return
+
+    // Ha a nap dísze még nincs a fán, az oldal a fához görget, ahol a dísz a helyére esik.
+    const toTree = state.days[day]?.ornamentShown === false
+
     // A fókusz visszakerül a megnyitó ajtóra (Safari kattintásra nem fókuszál gombot,
     // ezért nem bízzuk csak a <dialog> beépített viselkedésére).
-    if (day !== undefined) {
-      document.querySelector<HTMLElement>(`[data-day="${day}"]`)?.focus()
+    document
+      .querySelector<HTMLElement>(`[data-day="${day}"]`)
+      ?.focus({ preventScroll: toTree })
+
+    if (toTree) {
+      document
+        .getElementById(TREE_ID)
+        ?.scrollIntoView?.({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'center' })
     }
   }
 
@@ -62,6 +84,7 @@ function Page() {
           onOpened={startDay}
           onRevisit={(day) => setActive({ day, entry: 'revisit' })}
         />
+        <TreeScene hold={active?.day ?? starting ?? undefined} />
         <ProgressSummary />
       </main>
       {active && (

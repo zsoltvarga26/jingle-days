@@ -1,6 +1,8 @@
 import type { Ornament, Quote } from '../../content/types'
 import { useI18n } from '../../i18n/useI18n'
 import controls from '../../styles/controls.module.css'
+import { OrnamentIcon } from '../TreeScene/ornaments/OrnamentArt'
+import { treePalette } from '../TreeScene/palette'
 import styles from './QuoteStep.module.css'
 
 /** Az idézet szövege a nyelvnek megfelelő idézőjelekkel, alatta a szerző és a forrás. */
@@ -23,7 +25,7 @@ export interface QuoteStepProps {
   onFinish: () => void
 }
 
-/** Idézet és a megkapott dísz bemutatása. A dísz rajza a 4. fázisban készül el. */
+/** Idézet és a megkapott dísz bemutatása. */
 export function QuoteStep({ quote, ornament, onFinish }: QuoteStepProps) {
   const { t, pick } = useI18n()
 
@@ -32,7 +34,9 @@ export function QuoteStep({ quote, ornament, onFinish }: QuoteStepProps) {
       <QuoteBlock quote={quote} />
 
       <p className={styles.ornament}>
-        <span className={styles.preview} aria-hidden="true" />
+        <span className={styles.preview}>
+          <OrnamentIcon ornament={ornament} palette={treePalette} size={52} />
+        </span>
         {t('quote.ornament', { name: pick(ornament.name) })}
       </p>
 

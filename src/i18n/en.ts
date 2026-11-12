@@ -80,6 +80,11 @@ export const en: Record<MessageKey, string> = {
   'summary.puzzle.resume': 'Give it a try',
   'summary.close': 'Close',
 
+  'tree.title': 'Our tree',
+  'tree.label': 'Christmas tree with {n} of 24 ornaments',
+  'tree.count': '{n} / 24 ornaments on the tree',
+  'tree.complete': 'The tree is finished! Merry Christmas!',
+
   'progress.opened': '{n} / 24 doors open',
   'progress.points.one': '{n} point',
   'progress.points.other': '{n} points',

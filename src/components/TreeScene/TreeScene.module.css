@@ -1,0 +1,51 @@
+.scene {
+  margin-top: clamp(2rem, 6vw, 3.5rem);
+  text-align: center;
+  scroll-margin-top: 1rem;
+}
+
+.title {
+  margin: 0 0 0.6rem;
+  font-weight: 800;
+  font-size: clamp(1.7rem, 5.5vw, 2.6rem);
+  line-height: 1;
+  color: var(--pine);
+}
+
+.frame {
+  width: min(100%, 26rem);
+  margin: 0 auto;
+}
+
+.tree {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* A leeső dísz a rajz fölül érkezik. */
+  overflow: visible;
+  filter: drop-shadow(0 10px 14px var(--shadow));
+}
+
+.count {
+  margin: 0.6rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.3em 1em 0.15em;
+  border-radius: 999px;
+  background: var(--snow);
+  color: var(--pine-dark);
+  box-shadow: 0 4px 0 var(--bg-2);
+}
+
+.complete {
+  margin: 1rem auto 0;
+  max-width: 24ch;
+  font-weight: 800;
+  font-size: clamp(1.4rem, 4.6vw, 2rem);
+  line-height: 1.15;
+  color: var(--red);
+}

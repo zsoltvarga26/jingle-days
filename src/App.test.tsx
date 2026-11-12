@@ -13,7 +13,7 @@ function renderAt(date: Date, lang: 'hu' | 'en' = 'hu') {
   return render(<App />)
 }
 
-const doors = () => within(screen.getByRole('region')).getAllByRole('button')
+const doors = () => [...document.querySelectorAll<HTMLElement>('button[data-day]')]
 const door = (day: number) => doors().find((b) => b.getAttribute('data-day') === String(day))!
 const statuses = () =>
   Object.fromEntries(doors().map((b) => [Number(b.getAttribute('data-day')), b.getAttribute('data-status')]))
@@ -259,6 +259,48 @@ describe('App', () => {
       click(dialog, 'Tovább')
       expect(currentStep(dialog)).toHaveTextContent('Idézet')
       expect(puzzleStatuses(24)).toEqual(['skipped', 'done'])
+    })
+
+    test('a dísz a dialógus bezárása után kerül a fára, nem előbb', () => {
+      renderAt(new Date(2026, 11, 10, 9))
+      const ornament = () => document.querySelector('[data-ornament="d02-bauble-gold"]')!
+      expect(ornament()).toHaveAttribute('data-state', 'ghost')
+      expect(screen.getByText('0 / 24 dísz a fán')).toBeInTheDocument()
+
+      const dialog = openDialog(2)
+      // Az ajtó nyitva, a dísz jár, de amíg a dialógus nyitva van, nem esik le a háttérben.
+      expect(screen.getByText('1 / 24 dísz a fán')).toBeInTheDocument()
+      act(() => {
+        vi.advanceTimersByTime(5000)
+      })
+      expect(ornament()).toHaveAttribute('data-state', 'ghost')
+      expect(saved(2).ornamentShown).toBe(false)
+
+      click(dialog, 'Bezárás')
+      expect(ornament()).toHaveAttribute('data-state', 'dropping')
+      act(() => {
+        vi.advanceTimersByTime(2000)
+      })
+      expect(ornament()).toHaveAttribute('data-state', 'earned')
+      expect(saved(2).ornamentShown).toBe(true)
+    })
+
+    test('félbeszakadt nap dísze a következő betöltéskor kerül a fára', () => {
+      const first = renderAt(new Date(2026, 11, 10, 9))
+      openDialog(2)
+      // A fül bezárása a dialógus közben: a dísz megvan, de még nem került fel.
+      first.unmount()
+      expect(saved(2).ornamentShown).toBe(false)
+
+      render(<App />)
+      expect(document.querySelector('[data-ornament="d02-bauble-gold"]')).toHaveAttribute(
+        'data-state',
+        'dropping',
+      )
+      act(() => {
+        vi.advanceTimersByTime(2000)
+      })
+      expect(saved(2).ornamentShown).toBe(true)
     })
 
     test('nyelvváltás nyitott dialógus közben nem veszít el állapotot', () => {

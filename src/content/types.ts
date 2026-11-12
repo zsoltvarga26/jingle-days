@@ -67,6 +67,8 @@ export interface Ornament {
   name: L
   /** A fa SVG egységeiben: x 0–100, y 0–120. */
   slot: { x: number; y: number }
+  /** Nagyítás a szokásos díszmérethez képest (pl. a csúcsdísz nagyobb); alapból 1. */
+  scale?: number
 }
 
 export interface DayContent {
