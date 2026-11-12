@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+import { getDay } from '../../content/days'
 import type { DoorLayout } from '../../content/layout'
 import { Door, type DoorProps } from './Door'
 
@@ -10,6 +11,7 @@ function setup(props: Partial<DoorProps> = {}) {
   const view = render(
     <Door
       layout={layout}
+      ornament={getDay(5).ornament}
       index={0}
       status="closed"
       ariaLabel="5. ablak"
@@ -59,6 +61,16 @@ describe('Door', () => {
     fireEvent.click(button)
     expect(onOpen).not.toHaveBeenCalled()
     expect(onRevisit).toHaveBeenCalledWith(5)
+  })
+
+  test('az ajtó mögött a nap dísze van, nem a szám', () => {
+    const { button } = setup({ status: 'open' })
+    const inside = button.firstElementChild!
+    expect(inside.querySelector('svg')).not.toBeNull()
+    expect(inside).not.toHaveTextContent('5')
+    // Egyszínű sziluett: minden szín a szöveg színét követi.
+    const fills = [...inside.querySelectorAll('[fill]')].map((el) => el.getAttribute('fill'))
+    expect(new Set(fills.filter((f) => f !== 'none'))).toEqual(new Set(['currentColor']))
   })
 
   test('a képernyőolvasónak szóló név a kapott címke', () => {

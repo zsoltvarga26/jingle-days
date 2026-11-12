@@ -70,24 +70,43 @@ export function TreeScene({ hold }: TreeSceneProps) {
     return { earned: earnedIds, pending: pendingDays }
   }, [state, hold])
 
-  // Ami felkerülésre vár, az akkor esik a helyére, amikor a fa látszik.
-  const droppingDays = inView ? pending : []
-  const droppingKey = droppingDays.join(',')
+  // Ami felkerülésre vár, az akkor indul el, amikor a fa látszik. Ami egyszer elindult,
+  // az a végéig lefut és elmentődik akkor is, ha a fa közben kikerül a képből – különben
+  // a „felkerült” jelzés elmaradna, és a dísz a következő alkalommal újra leesne.
+  const [started, setStarted] = useState<readonly number[]>([])
+  const fresh = inView ? pending.filter((day) => !started.includes(day)) : []
+  if (fresh.length > 0) setStarted([...started, ...fresh])
+
+  const timers = useRef(new Map<number, number>())
+  useEffect(() => {
+    const running = timers.current
+    return () => {
+      running.forEach((timer) => window.clearTimeout(timer))
+      running.clear()
+    }
+  }, [])
 
   useEffect(() => {
-    if (droppingKey === '') return
-    const waiting = droppingKey.split(',').map(Number)
-    const finish = () => waiting.forEach((day) => dispatch({ type: 'ORNAMENT_SHOWN', day }))
-    const reduced = prefersReducedMotion()
-    const duration = reduced ? 0 : DROP_MS + DROP_STAGGER_MS * (waiting.length - 1)
-    const timer = window.setTimeout(finish, duration)
-    const chime = window.setTimeout(() => play('sparkle'), reduced ? 0 : LANDING_MS)
-    return () => {
-      window.clearTimeout(timer)
-      window.clearTimeout(chime)
-    }
-  }, [droppingKey, dispatch, play])
+    const running = timers.current
+    const begin = started.filter((day) => !running.has(day))
+    if (begin.length === 0) return
 
+    const reduced = prefersReducedMotion()
+    begin.forEach((day, index) => {
+      const duration = reduced ? 0 : DROP_MS + DROP_STAGGER_MS * index
+      const timer = window.setTimeout(() => {
+        running.delete(day)
+        dispatch({ type: 'ORNAMENT_SHOWN', day })
+        setStarted((current) => current.filter((d) => d !== day))
+      }, duration)
+      running.set(day, timer)
+    })
+    // A csillogó hang a leérkezés pillanatában szól, kötegenként egyszer.
+    const chime = window.setTimeout(() => play('sparkle'), reduced ? 0 : LANDING_MS)
+    running.set(-begin[0], chime)
+  }, [started, dispatch, play])
+
+  const droppingKey = started.filter((day) => pending.includes(day)).join(',')
   const dropping = useMemo(
     () =>
       new Set(

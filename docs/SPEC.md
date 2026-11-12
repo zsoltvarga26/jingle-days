@@ -77,7 +77,7 @@ A vizuális nyelv az A változaté változatlanul: fenyőzöld kalendáriumtábl
 
 **Animációk, amelyek átkerülnek:**
 
-- **Ajtónyitás:** 3D `rotateY(-112deg)`, 0,8 s, rugalmas görbe; a szám pop animációval jelenik meg.
+- **Ajtónyitás:** 3D `rotateY(-112deg)`, 0,8 s, rugalmas görbe; a kitárult fedél ezután elhalványul és eltűnik, hogy ne takarja a szomszédos ajtókat. Az ajtó mögött a nap dísze jelenik meg pop animációval.
 - **Belépés:** az ajtók betöltéskor 45 ms-os késleltetéssel egymás után „lepottyannak”.
 - **Hóesés és címbillegés:** folyamatos háttéranimáció.
 - **Visszaszámláló:** a változó szám kicsit megugrik.
@@ -111,7 +111,7 @@ Az alkalmazás egyetlen oldal, routing nélkül: felül a fejléc és visszaszá
 | `ProgressSummary` | „X / 24 ablak nyitva”, pontszám, megosztás gomb, visszaállítás megerősítéssel | – |
 | `ShareCard` | A megosztható eredménykártya előnézete és megosztása | `stats`, `lang` |
 
-A `Door` három állapota: **zárolt** (jövőbeli nap, enyhén halvány, kattintásra rázkódik és kiírja, hány nap múlva nyílik), **zárt** (nyitható), **nyitott** (a szám látszik; ha maradt átugrott rész, egy kis arany pötty jelzi). Nyitott ajtóra kattintva újra megnyílik a dialógus, ahol az átugrott részek folytathatók.
+A `Door` három állapota: **zárolt** (jövőbeli nap, enyhén halvány, kattintásra rázkódik és kiírja, hány nap múlva nyílik), **zárt** (nyitható), **nyitott** (a fedél eltűnt, a szám helyén a nap megkapott dísze látszik egyszínű sziluettként, a belső felület szövegszínével; ha maradt átugrott rész, egy kis arany pötty jelzi). Nyitott ajtóra kattintva újra megnyílik a dialógus, ahol az átugrott részek folytathatók.
 
 **Dátumzár:** egy nap a helyi idő szerinti napjának 00:00-jától nyitható, a korábbi napok bármikor utólag is. December 1. előtt minden ajtó zárolt, és a kalendárium felett a `StartBanner` jelenik meg arany keretes, enyhén pulzáló csíkként: „Az első ablak december 1-jén nyílik – még 20 nap!” (a szám naponta frissül). A zárolt ajtó kattintásra rázkódik, és egy rövid buborék kiírja, hány nap múlva nyílik („Holnap nyílik” / „5 nap múlva nyílik”); pontos dátumot nem ír, így nincs szükség magyar toldaléktáblára. December 24. után minden ajtó nyitható marad, így az elmaradt napok később is bepótolhatók.
 

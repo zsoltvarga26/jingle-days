@@ -42,13 +42,23 @@ export function OrnamentIcon({
   ornament,
   palette,
   size = 44,
+  className,
 }: {
   ornament: Ornament
   palette: TreePalette
-  size?: number
+  /** Képpontban, vagy CSS-hosszként (pl. '1.3em'). */
+  size?: number | string
+  className?: string
 }) {
   return (
-    <svg viewBox="-6 -6 12 12" width={size} height={size} aria-hidden="true" focusable="false">
+    <svg
+      className={className}
+      viewBox="-6 -6 12 12"
+      width={size}
+      height={size}
+      aria-hidden="true"
+      focusable="false"
+    >
       <OrnamentArt ornament={ornament} palette={palette} />
     </svg>
   )

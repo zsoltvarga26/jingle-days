@@ -72,12 +72,19 @@
   font-size: clamp(4.5rem, 12vw, 7rem);
 }
 
-.inside span {
+/* A megkapott dísz az ajtó mögött. */
+.prize {
+  display: grid;
+  place-items: center;
   transform: scale(0.3);
   opacity: 0;
 }
 
-.open .inside span {
+.prize svg {
+  display: block;
+}
+
+.open .prize {
   animation: pop 0.6s cubic-bezier(0.3, 1.6, 0.5, 1) 0.25s forwards;
 }
 
@@ -152,7 +159,9 @@
   inset: 0;
   transform-origin: left center;
   transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(0.5, 0, 0.2, 1.2);
+  transition:
+    transform 0.8s cubic-bezier(0.5, 0, 0.2, 1.2),
+    opacity 0.3s ease;
   border-radius: var(--radius-door);
 }
 
@@ -303,8 +312,14 @@
   }
 }
 
+/* A fedél kitárul, majd elhalványul, hogy ne takarja a szomszédos ajtókat. */
 .open .door {
   transform: rotateY(-112deg);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.8s cubic-bezier(0.5, 0, 0.2, 1.2),
+    opacity 0.45s ease 0.6s;
 }
 
 .open .front::after {
@@ -360,7 +375,7 @@
   transition: none;
 }
 
-.instant.open .inside span {
+.instant.open .prize {
   animation: none;
   transform: none;
   opacity: 1;
@@ -408,11 +423,11 @@
   .door {
     transition-duration: 0.01ms;
   }
-  .inside span {
+  .open .prize {
     transform: none;
     opacity: 1;
   }
-  .open .inside span,
+  .open .prize,
   .open .inside::before,
   .open .inside::after,
   .shake,

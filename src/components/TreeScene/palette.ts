@@ -85,3 +85,21 @@ export const treePalette: TreePalette = {
     white: { fill: v.snow, shade: v.snowDark },
   },
 }
+
+/**
+ * Egyszínű paletta: a dísz sziluettként, egyetlen színnel jelenik meg (pl. a kinyitott ajtó
+ * mögött, a szöveg színével: `currentColor`). Csak az oldalon használható, a megosztókártyán nem.
+ */
+export function monoPalette(color: string): TreePalette {
+  const pair = { fill: color, shade: color }
+  return {
+    tree: [color, color, color],
+    trunk: color,
+    snow: color,
+    gold: color,
+    goldDark: color,
+    gingerbread: color,
+    ghostDark: color,
+    colors: { red: pair, gold: pair, green: pair, blue: pair, pink: pair, silver: pair, white: pair },
+  }
+}

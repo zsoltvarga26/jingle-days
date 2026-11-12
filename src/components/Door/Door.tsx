@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import type { DoorLayout } from '../../content/layout'
+import type { Ornament } from '../../content/types'
+import { OrnamentIcon } from '../TreeScene/ornaments/OrnamentArt'
+import { monoPalette } from '../TreeScene/palette'
 import styles from './Door.module.css'
 
 /** zárolt: jövőbeli nap · zárt: nyitható · nyitott: már megnyitva */
@@ -7,6 +10,8 @@ export type DoorStatus = 'locked' | 'closed' | 'open'
 
 export interface DoorProps {
   layout: DoorLayout
+  /** A nap dísze: a kinyitott ajtó mögött ez látszik a szám helyett. */
+  ornament: Ornament
   /** Hányadik a rácsban; a belépő animáció késleltetését adja. */
   index: number
   status: DoorStatus
@@ -26,8 +31,12 @@ export interface DoorProps {
 
 const BUBBLE_MS = 2600
 
+/** A dísz az ajtó mögött egyszínű sziluett, a belső felület szövegszínével. */
+const INSIDE_PALETTE = monoPalette('currentColor')
+
 export function Door({
   layout,
+  ornament,
   index,
   status,
   ariaLabel,
@@ -90,7 +99,9 @@ export function Door({
       onClick={handleClick}
     >
       <span className={styles.inside} aria-hidden="true">
-        <span>{day}</span>
+        <span className={styles.prize}>
+          <OrnamentIcon ornament={ornament} palette={INSIDE_PALETTE} size="1.35em" />
+        </span>
         {status === 'open' && hasSkipped && <i className={styles.dot} />}
       </span>
       <span

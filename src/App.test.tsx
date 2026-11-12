@@ -303,6 +303,78 @@ describe('App', () => {
       expect(saved(2).ornamentShown).toBe(true)
     })
 
+    test('a már felkerült dísz nem esik le újra, ha a napot újra megnyitják és bezárják', () => {
+      renderAt(new Date(2026, 11, 10, 9))
+      const ornament = () => document.querySelector('[data-ornament="d02-bauble-gold"]')!
+      const scrolls = vi.fn()
+      Element.prototype.scrollIntoView = scrolls
+
+      click(openDialog(2), 'Bezárás')
+      expect(scrolls).toHaveBeenCalledTimes(1)
+      act(() => {
+        vi.advanceTimersByTime(2000)
+      })
+      expect(ornament()).toHaveAttribute('data-state', 'earned')
+
+      // Újra megnyitva (összefoglaló) és bezárva: nincs görgetés, nincs animáció.
+      fireEvent.click(door(2))
+      click(screen.getByRole('dialog'), 'Bezárom')
+      expect(ornament()).toHaveAttribute('data-state', 'earned')
+      expect(scrolls).toHaveBeenCalledTimes(1)
+      act(() => {
+        vi.advanceTimersByTime(3000)
+      })
+      expect(ornament()).toHaveAttribute('data-state', 'earned')
+    })
+
+    test('az elindult díszanimáció akkor is lezárul, ha a fa közben kikerül a képből', () => {
+      // Ál-IntersectionObserver: a teszt maga mondja meg, látszik-e a fa.
+      let report: (visible: boolean) => void = () => {}
+      vi.stubGlobal(
+        'IntersectionObserver',
+        class {
+          constructor(callback: (entries: { isIntersecting: boolean }[]) => void) {
+            report = (visible) => callback([{ isIntersecting: visible }])
+          }
+          observe() {}
+          disconnect() {}
+        },
+      )
+      try {
+        renderAt(new Date(2026, 11, 10, 9))
+        const ornament = () => document.querySelector('[data-ornament="d02-bauble-gold"]')!
+
+        click(openDialog(2), 'Bezárás')
+        // Amíg a fa nem látszik, a dísz vár.
+        act(() => {
+          vi.advanceTimersByTime(3000)
+        })
+        expect(ornament()).toHaveAttribute('data-state', 'ghost')
+
+        act(() => report(true))
+        expect(ornament()).toHaveAttribute('data-state', 'dropping')
+
+        // A játékos az animáció közben elgörget: a dísz ettől még felkerül és elmentődik.
+        act(() => {
+          vi.advanceTimersByTime(300)
+          report(false)
+        })
+        act(() => {
+          vi.advanceTimersByTime(2000)
+        })
+        expect(saved(2).ornamentShown).toBe(true)
+
+        act(() => report(true))
+        expect(ornament()).toHaveAttribute('data-state', 'earned')
+        act(() => {
+          vi.advanceTimersByTime(3000)
+        })
+        expect(ornament()).toHaveAttribute('data-state', 'earned')
+      } finally {
+        vi.unstubAllGlobals()
+      }
+    })
+
     test('nyelvváltás nyitott dialógus közben nem veszít el állapotot', () => {
       renderAt(new Date(2026, 11, 10, 9))
       const dialog = openDialog(2)

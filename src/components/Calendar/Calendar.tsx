@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSound } from '../../audio/useSound'
-import { stepCounts } from '../../content/days'
+import { getDay, stepCounts } from '../../content/days'
 import type { DoorLayout } from '../../content/layout'
 import { useI18n } from '../../i18n/useI18n'
 import { daysUntil, isDayUnlocked, isUnlockAll, unlockDate, useToday } from '../../lib/dates'
@@ -69,6 +69,7 @@ export function Calendar({ layout, onOpened, onRevisit }: CalendarProps) {
           <Door
             key={door.day}
             layout={door}
+            ornament={getDay(door.day).ornament}
             index={index}
             status={status}
             ariaLabel={ariaLabel}
