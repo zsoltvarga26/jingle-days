@@ -132,12 +132,12 @@ Hatókör: `src/audio/` a spec szerint, `SoundControls`.
 
 **Kész, ha:**
 
-- [ ] Az oldal betöltésekor nincs hang és nincs konzolfigyelmeztetés az `AudioContext`-ről; az első kattintás után szólnak az effektek.
-- [ ] A hat esemény hangja megkülönböztethető, egyik sem bántó fülhallgatóval sem.
-- [ ] A két kapcsoló egymástól függetlenül működik, az állapotuk és a hangerő frissítés után megmarad.
-- [ ] Mentett „zene: be” mellett a zene az első kattintásra indul, nem magától.
-- [ ] Másik fülre váltva a zene elhalkul és megáll, visszatérve folytatódik; a ritmus nem akad görgetés és animáció közben.
-- [ ] Kipróbálva asztali Chrome-ban, Firefoxban és egy valódi iPhone-on (Safari).
+- [x] Az oldal betöltésekor nincs hang és nincs konzolfigyelmeztetés az `AudioContext`-ről; az első kattintás után szólnak az effektek.
+- [ ] A hat esemény hangja megkülönböztethető, egyik sem bántó fülhallgatóval sem. *Mérve mind szól és nem torzít, de a hangzást fülre még senki nem hallgatta meg.*
+- [x] A két kapcsoló egymástól függetlenül működik, az állapotuk és a hangerő frissítés után megmarad.
+- [x] Mentett „zene: be” mellett a zene az első kattintásra indul, nem magától.
+- [ ] Másik fülre váltva a zene elhalkul és megáll, visszatérve folytatódik; a ritmus nem akad görgetés és animáció közben. *A szünet és a folytatás mérve működik; a ritmus egyenletességét fülre kell ellenőrizni.*
+- [ ] Kipróbálva asztali Chrome-ban, Firefoxban és egy valódi iPhone-on (Safari). *Eddig csak a beépített (Chromium) böngészőben futott.*
 
 ## 6. fázis – Megosztható kártya
 

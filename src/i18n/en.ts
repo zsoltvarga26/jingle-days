@@ -11,6 +11,16 @@ export const en: Record<MessageKey, string> = {
   'lang.hu': 'Hungarian',
   'lang.en': 'English',
 
+  'sound.group': 'Sound',
+  'sound.sfx': 'Sound effects',
+  'sound.music': 'Background music',
+  'sound.volume': 'Music volume',
+  'sound.next': 'Next tune (now playing: {title})',
+  'melody.silent-night': 'Silent Night',
+  'melody.jingle-bells': 'Jingle Bells',
+  'melody.deck-the-halls': 'Deck the Halls',
+  'melody.o-tannenbaum': 'O Christmas Tree',
+
   'countdown.until': 'Until Christmas Eve',
   'countdown.days.one': 'day',
   'countdown.days.other': 'days',

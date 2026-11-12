@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
+import { useSound } from '../../audio/useSound'
 import { getDay } from '../../content/days'
 import { useI18n } from '../../i18n/useI18n'
 import { burstConfetti } from '../../lib/confetti'
@@ -34,6 +35,7 @@ export interface DayDialogProps {
 export function DayDialog({ day, entry, onClose }: DayDialogProps) {
   const { t } = useI18n()
   const { state, dispatch } = useProgress()
+  const play = useSound()
   const dialog = useRef<HTMLDialogElement>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
   const [view, setView] = useState<View>({ step: entry === 'fresh' ? 'quiz' : 'summary' })
@@ -117,9 +119,10 @@ export function DayDialog({ day, entry, onClose }: DayDialogProps) {
           <QuizStep
             questions={content.quiz}
             progress={progress.quiz}
-            onAnswer={(question, choice) =>
+            onAnswer={(question, choice) => {
               dispatch({ type: 'ANSWER_QUESTION', day, question, choice })
-            }
+              play(choice === content.quiz[question].correctIndex ? 'success' : 'wrong')
+            }}
             onCorrect={celebrate}
             onSkip={() => {
               dispatch({ type: 'SKIP_QUIZ', day })
@@ -134,8 +137,14 @@ export function DayDialog({ day, entry, onClose }: DayDialogProps) {
             puzzles={content.emoji}
             progress={progress.emoji}
             start={view.start}
-            onGuess={(puzzle, correct) => dispatch({ type: 'SUBMIT_GUESS', day, puzzle, correct })}
-            onRevealHint={(puzzle) => dispatch({ type: 'REVEAL_HINT', day, puzzle })}
+            onGuess={(puzzle, correct) => {
+              dispatch({ type: 'SUBMIT_GUESS', day, puzzle, correct })
+              play(correct ? 'solved' : 'wrong')
+            }}
+            onRevealHint={(puzzle) => {
+              dispatch({ type: 'REVEAL_HINT', day, puzzle })
+              play('hint')
+            }}
             onSkip={(puzzle) => dispatch({ type: 'SKIP_EMOJI', day, puzzle })}
             onSolved={celebrate}
             onDone={() => after('emoji')}

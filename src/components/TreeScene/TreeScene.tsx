@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useSound } from '../../audio/useSound'
 import { days } from '../../content/days'
 import { useI18n } from '../../i18n/useI18n'
 import { useProgress } from '../../state/useProgress'
@@ -10,6 +11,8 @@ import styles from './TreeScene.module.css'
 /** Egy dísz leesése és a csillogás ennyi ideig tart; több dísznél ennyivel követik egymást. */
 const DROP_MS = 1300
 const DROP_STAGGER_MS = 180
+/** A dísz ennyi idő után ér a helyére: ekkor szól a csillogó hang. */
+const LANDING_MS = 560
 
 const ornaments = days.map((day) => day.ornament)
 
@@ -52,6 +55,7 @@ export interface TreeSceneProps {
 export function TreeScene({ hold }: TreeSceneProps) {
   const { t } = useI18n()
   const { state, dispatch } = useProgress()
+  const play = useSound()
   const [ref, inView] = useInView(0.35)
 
   const { earned, pending } = useMemo(() => {
@@ -74,12 +78,15 @@ export function TreeScene({ hold }: TreeSceneProps) {
     if (droppingKey === '') return
     const waiting = droppingKey.split(',').map(Number)
     const finish = () => waiting.forEach((day) => dispatch({ type: 'ORNAMENT_SHOWN', day }))
-    const duration = prefersReducedMotion()
-      ? 0
-      : DROP_MS + DROP_STAGGER_MS * (waiting.length - 1)
+    const reduced = prefersReducedMotion()
+    const duration = reduced ? 0 : DROP_MS + DROP_STAGGER_MS * (waiting.length - 1)
     const timer = window.setTimeout(finish, duration)
-    return () => window.clearTimeout(timer)
-  }, [droppingKey, dispatch])
+    const chime = window.setTimeout(() => play('sparkle'), reduced ? 0 : LANDING_MS)
+    return () => {
+      window.clearTimeout(timer)
+      window.clearTimeout(chime)
+    }
+  }, [droppingKey, dispatch, play])
 
   const dropping = useMemo(
     () =>

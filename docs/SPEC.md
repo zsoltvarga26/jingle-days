@@ -328,9 +328,10 @@ src/audio/
 
 | Esemény | Hang |
 | --- | --- |
-| Ajtónyitás | Puha, egyhangos csengő |
+| Ajtónyitás | Felfelé suhanó zaj, a végén puha, fás pukkanás (szándékosan nem csengő, hogy elüssön a zenétől) |
+| Zárolt ajtó | Két gyors, tompa kopogás: „még nem nyitható” |
 | Helyes válasz | Két felfelé lépő csengőhang |
-| Hibás válasz | Mély, tompított „bonk”, nem büntető hangzású |
+| Hibás válasz | Két lefelé lépő, puha hang; kis hangszórón is hallható, de nem büntető hangzású |
 | Tipp felfedése | Rövid, halk koppanás |
 | Rejtvény megfejtve | Háromhangos, felfelé futó arpeggio |
 | Dísz a fán | Csillogó, magas csengőfüzér |
@@ -342,7 +343,7 @@ A csengőhang additív szintézis: néhány szinuszoszcillátor a harangokra jel
 **Szabályok:**
 
 - A böngészők csak felhasználói művelet után engednek hangot. Az `AudioContext` ezért az első kattintáskor jön létre (vagy `resume()`-ol), a zene pedig csak a kapcsoló megnyomására indul.
-- Két külön kapcsoló van a fejlécben (hangeffektek, zene), az állapotuk a `Settings`-be mentődik. A zene mellett egy hangerőcsúszka is van.
+- Két külön kapcsoló van a fejlécben (hangeffektek, zene), az állapotuk a `Settings`-be mentődik. A zene mellett egy hangerőcsúszka és egy dallamváltó gomb is van: a gomb a következő dallam elejére ugrik, és a neve megmondja, melyik dallam szól éppen. A kiválasztott dallam nem mentődik, minden betöltés az elsővel indul.
 - Háttérbe került fülön (`visibilitychange`) a zene elhalkul és szünetel, visszatéréskor folytatódik.
 - Ha az oldal újratöltéskor „zene: be” állapotban van, a zene az első kattintásra indul el, nem magától.
 

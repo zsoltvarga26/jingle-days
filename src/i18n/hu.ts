@@ -12,6 +12,16 @@ export const hu = {
   'lang.hu': 'Magyar',
   'lang.en': 'Angol',
 
+  'sound.group': 'Hang',
+  'sound.sfx': 'Hangeffektek',
+  'sound.music': 'Háttérzene',
+  'sound.volume': 'A zene hangereje',
+  'sound.next': 'Következő dallam (most szól: {title})',
+  'melody.silent-night': 'Csendes éj',
+  'melody.jingle-bells': 'Jingle Bells',
+  'melody.deck-the-halls': 'Deck the Halls',
+  'melody.o-tannenbaum': 'Ó, szép fenyő',
+
   'countdown.until': 'Szentestéig még',
   'countdown.days.one': 'nap',
   'countdown.days.other': 'nap',

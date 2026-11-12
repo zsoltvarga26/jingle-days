@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { SoundManager } from './audio/SoundManager'
 import { Calendar } from './components/Calendar/Calendar'
 import { Countdown } from './components/Countdown/Countdown'
 import { DayDialog } from './components/DayDialog/DayDialog'
@@ -97,6 +98,7 @@ function Page() {
 export default function App() {
   return (
     <SettingsProvider>
+      <SoundManager />
       <I18nProvider>
         <ProgressProvider>
           <Page />

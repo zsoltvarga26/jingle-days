@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSound } from '../../audio/useSound'
 import { stepCounts } from '../../content/days'
 import type { DoorLayout } from '../../content/layout'
 import { useI18n } from '../../i18n/useI18n'
@@ -20,6 +21,7 @@ export interface CalendarProps {
 export function Calendar({ layout, onOpened, onRevisit }: CalendarProps) {
   const { t, tn } = useI18n()
   const { state, dispatch } = useProgress()
+  const play = useSound()
   const today = useToday()
   const unlockAll = isUnlockAll()
 
@@ -45,6 +47,7 @@ export function Calendar({ layout, onOpened, onRevisit }: CalendarProps) {
       puzzleCount: counts.emoji,
       at: new Date().toISOString(),
     })
+    play('door')
     onOpened?.(day)
   }
 
@@ -73,7 +76,10 @@ export function Calendar({ layout, onOpened, onRevisit }: CalendarProps) {
             hasSkipped={skipped}
             onOpen={open}
             onRevisit={onRevisit}
-            onLockedClick={() => setAnnouncement(`${t('door.label', { n: door.day })}: ${message}`)}
+            onLockedClick={() => {
+              play('locked')
+              setAnnouncement(`${t('door.label', { n: door.day })}: ${message}`)
+            }}
           />
         )
       })}

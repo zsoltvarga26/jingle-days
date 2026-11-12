@@ -4,22 +4,15 @@
   margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
 }
 
-/* Keskeny képernyőn külön sor a cím fölött, szélesen a jobb felső sarokban lebeg,
-   így a cím ugyanott marad, ahol a protótípusban. */
+/* A hangkapcsolók és a nyelvváltó külön sorban állnak a cím fölött, jobbra igazítva.
+   (A hangerőcsúszkával együtt nem férnek el a cím mellett anélkül, hogy rálógnának.) */
 .tools {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-end;
-  gap: 0.5rem;
+  gap: 0.5rem 0.9rem;
   margin-bottom: 0.75rem;
-}
-
-@media (min-width: 720px) {
-  .tools {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 0;
-  }
 }
 
 .title {
