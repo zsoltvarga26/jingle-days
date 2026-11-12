@@ -97,14 +97,14 @@ Hatókör: `EmojiStep`, `lib/normalize.ts`, `QuoteStep`, a dialógus teljes foly
 
 **Kész, ha:**
 
-- [ ] `normalize()` tesztek: „JÉGVARÁZS!”, „ jegvarazs ”, „A Grincs” = „grincs”, „The Grinch” = „grinch”, üres bemenet nem egyezik semmivel.
-- [ ] Magyar felületen az angol megfejtés is elfogadott, és fordítva.
-- [ ] Hibás válasz: rázkódás + szöveges üzenet, a mező tartalma megmarad és ki van jelölve; Enter is beküld.
-- [ ] A 2. tipp csak az 1. után nyitható; a felfedett tippek frissítés után is nyitva vannak.
-- [ ] „Rejtvény kihagyása” nem mutatja a megfejtést; a 24. napon csak az aktuális rejtvényt ugorja.
-- [ ] Megfejtett rejtvényre visszatérve csak az eredmény látszik.
-- [ ] Az idézet lépésén látszik a dísz neve és képe (ekkor még helykitöltő is lehet); a gomb bezárja a dialógust.
-- [ ] A fejlécben vagy a `ProgressSummary`-ben a pontszám helyesen számolódik (számolt érték, nincs a mentésben).
+- [x] `normalize()` tesztek: „JÉGVARÁZS!”, „ jegvarazs ”, „A Grincs” = „grincs”, „The Grinch” = „grinch”, üres bemenet nem egyezik semmivel.
+- [x] Magyar felületen az angol megfejtés is elfogadott, és fordítva.
+- [x] Hibás válasz: rázkódás + szöveges üzenet, a mező tartalma megmarad és ki van jelölve; Enter is beküld.
+- [x] A 2. tipp csak az 1. után nyitható; a felfedett tippek frissítés után is nyitva vannak.
+- [x] „Rejtvény kihagyása” nem mutatja a megfejtést; a 24. napon csak az aktuális rejtvényt ugorja.
+- [x] Megfejtett rejtvényre visszatérve csak az eredmény látszik.
+- [x] Az idézet lépésén látszik a dísz neve és képe (ekkor még helykitöltő is lehet); a gomb bezárja a dialógust.
+- [x] A fejlécben vagy a `ProgressSummary`-ben a pontszám helyesen számolódik (számolt érték, nincs a mentésben).
 
 ## 4. fázis – Fenyőfa
 

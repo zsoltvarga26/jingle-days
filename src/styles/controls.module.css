@@ -1,0 +1,73 @@
+/* Közös gombok a napi dialógus lépéseihez. A dialógus felülete mindig világos (snow). */
+.primary,
+.outline,
+.quiet {
+  min-height: 2.9rem;
+  border-radius: 999px;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Fő művelet: tovább, ellenőrzés, bezárás. */
+.primary {
+  padding: 0.5em 1.5em 0.35em;
+  border: 0;
+  background: var(--pine);
+  color: var(--snow);
+  font-weight: 700;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 0 var(--pine-dark);
+}
+
+/* Másodlagos művelet: folytatás, tipp felfedése. */
+.outline {
+  padding: 0.4em 1.1em 0.25em;
+  border: 2px solid var(--pine);
+  background: var(--snow);
+  color: var(--pine-dark);
+  font-weight: 700;
+}
+
+.outline[aria-disabled='true'] {
+  border-color: var(--snow-dark);
+  color: var(--on-snow-soft);
+  cursor: default;
+}
+
+/* Csendes művelet: kihagyás. */
+.quiet {
+  padding: 0.4em 1.1em 0.25em;
+  border: 2px solid transparent;
+  background: transparent;
+  color: var(--on-snow-soft);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+@media (hover: hover) {
+  .outline:not([aria-disabled='true']):hover {
+    background: color-mix(in srgb, var(--gold) 28%, var(--snow));
+  }
+}
+
+.primary:focus-visible,
+.outline:focus-visible,
+.quiet:focus-visible {
+  outline: 4px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* Lépés alján a gombsor: fő művelet balra, kihagyás jobbra. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.actions .quiet {
+  margin-left: auto;
+}

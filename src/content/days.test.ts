@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+import { acceptedAnswers, normalize } from '../lib/normalize'
 import { days } from './days'
 import { LANGS, type L } from './types'
 
@@ -82,6 +83,43 @@ describe('emoji-rejtvények', () => {
       }
       expect(p.hints, p.id).toHaveLength(2)
       for (const hint of p.hints) expect(filled(hint), p.id).toBe(true)
+    }
+  })
+})
+
+describe('emoji-rejtvények válaszai (normalizálva)', () => {
+  const puzzles = days.flatMap((d) => d.emoji.map((p) => ({ puzzle: p, draft: d.draft === true })))
+
+  test('normalizálás után egyik elfogadott válasz sem üres', () => {
+    for (const { puzzle } of puzzles) {
+      for (const answer of [...puzzle.answers.hu, ...puzzle.answers.en]) {
+        expect(normalize(answer), `${puzzle.id}: „${answer}”`).not.toBe('')
+      }
+    }
+  })
+
+  test('két különböző rejtvénynek nincs közös elfogadott válasza', () => {
+    const owner = new Map<string, string>()
+    for (const { puzzle } of puzzles) {
+      for (const answer of acceptedAnswers(puzzle)) {
+        expect(owner.get(answer) ?? puzzle.id, `„${answer}”`).toBe(puzzle.id)
+        owner.set(answer, puzzle.id)
+      }
+    }
+  })
+
+  test('a megírt napok tippjei nem árulják el a megfejtést', () => {
+    for (const { puzzle, draft } of puzzles) {
+      if (draft) continue
+      const answers = [...acceptedAnswers(puzzle)]
+      for (const hint of puzzle.hints) {
+        for (const lang of LANGS) {
+          const text = normalize(hint[lang])
+          for (const answer of answers) {
+            expect(text.includes(answer), `${puzzle.id} (${lang}): „${hint[lang]}”`).toBe(false)
+          }
+        }
+      }
     }
   })
 })

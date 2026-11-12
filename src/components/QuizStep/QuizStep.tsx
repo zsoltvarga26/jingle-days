@@ -3,6 +3,7 @@ import type { QuizQuestion } from '../../content/types'
 import { useI18n } from '../../i18n/useI18n'
 import { shuffledIndices } from '../../lib/shuffle'
 import { firstUnanswered, type QuizProgress } from '../../state/progress'
+import controls from '../../styles/controls.module.css'
 import styles from './QuizStep.module.css'
 
 export interface QuizStepProps {
@@ -133,19 +134,19 @@ export function QuizStep({ questions, progress, onAnswer, onSkip, onDone, onCorr
         )}
       </div>
 
-      <div className={styles.actions}>
+      <div className={controls.actions}>
         {answered &&
           (isLast ? (
-            <button type="button" className={styles.primary} onClick={onDone}>
+            <button type="button" className={controls.primary} onClick={onDone}>
               {t('quiz.finish')}
             </button>
           ) : (
-            <button type="button" className={styles.primary} onClick={() => setCurrent(current + 1)}>
+            <button type="button" className={controls.primary} onClick={() => setCurrent(current + 1)}>
               {t('quiz.next')}
             </button>
           ))}
         {progress.status !== 'done' && (
-          <button type="button" className={styles.secondary} onClick={onSkip}>
+          <button type="button" className={controls.quiet} onClick={onSkip}>
             {t('quiz.skip')}
           </button>
         )}

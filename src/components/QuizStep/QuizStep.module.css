@@ -167,50 +167,6 @@
   line-height: 1.35;
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-}
-
-.primary,
-.secondary {
-  font: inherit;
-  min-height: 2.9rem;
-  border-radius: 999px;
-  cursor: pointer;
-}
-
-.primary {
-  padding: 0.5em 1.5em 0.35em;
-  border: 0;
-  background: var(--pine);
-  color: var(--snow);
-  font-weight: 700;
-  font-size: 1.05rem;
-  box-shadow: 0 4px 0 var(--pine-dark);
-}
-
-.secondary {
-  margin-left: auto;
-  padding: 0.4em 1.1em 0.25em;
-  border: 2px solid transparent;
-  background: transparent;
-  color: var(--on-snow-soft);
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
-
-.primary:focus-visible,
-.secondary:focus-visible {
-  outline: 4px solid var(--gold);
-  outline-offset: 3px;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .option[data-state='wrong'] {
     animation: none;

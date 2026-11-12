@@ -73,6 +73,7 @@ describe('App', () => {
     window.localStorage.setItem(SAVE_KEY, '{ez nem json')
     renderAt(new Date(2026, 11, 10, 9))
     expect(screen.getByText('0 / 24 ablak nyitva')).toBeInTheDocument()
+    expect(screen.getByText('0 pont')).toBeInTheDocument()
   })
 
   test('december 26-án minden nyitható, a visszaszámláló helyén üdvözlet áll', () => {
@@ -103,14 +104,36 @@ describe('App', () => {
   })
 
   describe('napi dialógus', () => {
-    const q = getDay(2).quiz
+    const content = getDay(2)
+    const q = content.quiz
+    const puzzle = content.emoji[0]
     const right = (i: number) => q[i].options[q[i].correctIndex].hu
+    const quoteHu = `„${content.quote.text.hu}”`
+    const saved = (day: number) => JSON.parse(window.localStorage.getItem(SAVE_KEY)!).days[day]
+    const puzzleStatuses = (day: number) =>
+      (saved(day).emoji as { status: string }[]).map((p) => p.status)
+    const click = (root: HTMLElement, name: string) =>
+      fireEvent.click(within(root).getByRole('button', { name }))
+    const currentStep = (root: HTMLElement) =>
+      within(root).getByRole('list', { name: 'A nap lépései' }).querySelector('[aria-current="step"]')
+
     const openDialog = (day: number) => {
       fireEvent.click(door(day))
       act(() => {
         vi.advanceTimersByTime(1000)
       })
       return screen.getByRole('dialog')
+    }
+
+    const answerQuiz = (dialog: HTMLElement) =>
+      q.forEach((_, i) => {
+        click(dialog, right(i))
+        click(dialog, i < q.length - 1 ? 'Következő kérdés' : 'Tovább')
+      })
+
+    const guess = (dialog: HTMLElement, text: string) => {
+      fireEvent.change(within(dialog).getByLabelText('A megfejtésed'), { target: { value: text } })
+      click(dialog, 'Ellenőrzöm')
     }
 
     test('az ajtó kinyitása után megnyílik a kvízzel és a lépésjelzővel', () => {
@@ -124,61 +147,124 @@ describe('App', () => {
       })
       const dialog = screen.getByRole('dialog')
       expect(within(dialog).getByRole('heading', { level: 2 })).toHaveTextContent('December 2.')
-      expect(within(dialog).getByText('Kvíz')).toHaveAttribute('aria-current', 'step')
+      expect(currentStep(dialog)).toHaveTextContent('Kvíz')
       expect(within(dialog).getByRole('heading', { level: 3 })).toHaveTextContent(q[0].question.hu)
     })
 
-    test('kihagyás a 2. kérdésnél: a válasz megmarad, az ajtón pötty, a folytatás a 2. kérdésre visz', () => {
+    test('egy teljes nap: kvíz, rejtvény tippekkel, idézet, és a pontszám nő', () => {
       renderAt(new Date(2026, 11, 10, 9))
       const dialog = openDialog(2)
-      fireEvent.click(within(dialog).getByRole('button', { name: right(0) }))
-      fireEvent.click(within(dialog).getByRole('button', { name: 'Következő kérdés' }))
-      fireEvent.click(within(dialog).getByRole('button', { name: 'Kvíz kihagyása' }))
+      answerQuiz(dialog)
 
-      // A kihagyás után az összefoglaló jön.
-      expect(within(dialog).getByText('1 / 3 helyes')).toBeInTheDocument()
-      fireEvent.click(within(dialog).getByRole('button', { name: 'Bezárom' }))
+      // Rejtvény: hibás válasz, két tipp, helyes válasz.
+      expect(currentStep(dialog)).toHaveTextContent('Rejtvény')
+      expect(within(dialog).getByText(puzzle.emojis)).toBeInTheDocument()
+      guess(dialog, 'hógolyó')
+      expect(within(dialog).getByText('Nem ez az, próbáld újra!')).toBeInTheDocument()
+      expect(within(dialog).getByLabelText('A megfejtésed')).toHaveValue('hógolyó')
+
+      click(dialog, '1. tipp felfedése')
+      expect(within(dialog).getByText(puzzle.hints[0].hu)).toBeInTheDocument()
+      click(dialog, '2. tipp felfedése')
+      expect(within(dialog).getByText(puzzle.hints[1].hu)).toBeInTheDocument()
+
+      guess(dialog, ' HÓEMBER! ')
+      expect(within(dialog).getByText('A megfejtés: hóember')).toBeInTheDocument()
+      expect(saved(2).emoji[0]).toEqual({ hintsRevealed: 2, attempts: 2, status: 'done' })
+      click(dialog, 'Tovább')
+
+      // Idézet és a dísz, majd bezárás.
+      expect(currentStep(dialog)).toHaveTextContent('Idézet')
+      expect(within(dialog).getByText(quoteHu)).toBeInTheDocument()
+      expect(within(dialog).getByText('Új dísz a fára: Arany gömb')).toBeInTheDocument()
+      expect(saved(2).quoteSeen).toBe(true)
+      click(dialog, 'Díszítsük fel a fát!')
+
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-      expect(door(2)).toHaveAccessibleName('2. ablak, nyitva – van még kihagyott rész')
+      expect(door(2)).toHaveAccessibleName('2. ablak, nyitva')
       expect(door(2)).toHaveFocus()
+      // 3 helyes kvízválasz + 1 megfejtett rejtvény.
+      expect(screen.getByText('4 pont')).toBeInTheDocument()
+    })
+
+    test('kihagyás és visszatérés: pötty az ajtón, a részek ott folytathatók, ahol abbamaradtak', () => {
+      renderAt(new Date(2026, 11, 10, 9))
+      const dialog = openDialog(2)
+      click(dialog, right(0))
+      click(dialog, 'Következő kérdés')
+      click(dialog, 'Kvíz kihagyása')
+      click(dialog, '1. tipp felfedése')
+      click(dialog, 'Rejtvény kihagyása')
+
+      // A kihagyások után is az idézet jön, a megfejtés nem látszik sehol.
+      expect(currentStep(dialog)).toHaveTextContent('Idézet')
+      expect(within(dialog).queryByText(/hóember/i)).not.toBeInTheDocument()
+      click(dialog, 'Díszítsük fel a fát!')
+      expect(door(2)).toHaveAccessibleName('2. ablak, nyitva – van még kihagyott rész')
 
       // Nyitott ajtóra kattintva azonnal az összefoglaló nyílik.
       fireEvent.click(door(2))
       const again = screen.getByRole('dialog')
-      fireEvent.click(within(again).getByRole('button', { name: 'Folytatom a kvízt' }))
+      expect(within(again).getByText('1 / 3 helyes')).toBeInTheDocument()
+      expect(within(again).getByText('Kihagyva')).toBeInTheDocument()
+      expect(within(again).getByText(quoteHu)).toBeInTheDocument()
+
+      // A kvíz a 2. kérdésnél folytatódik, a végén visszavisz az összefoglalóhoz.
+      click(again, 'Folytatom a kvízt')
       expect(within(again).getByRole('heading', { level: 3 })).toHaveTextContent(q[1].question.hu)
-      expect(JSON.parse(window.localStorage.getItem(SAVE_KEY)!).days[2].quiz).toEqual({
-        answers: [q[0].correctIndex, null, null],
-        status: 'pending',
-      })
-    })
+      click(again, right(1))
+      click(again, 'Következő kérdés')
+      click(again, right(2))
+      click(again, 'Tovább')
+      expect(within(again).getByText('3 / 3 helyes')).toBeInTheDocument()
+      expect(within(again).queryByRole('button', { name: 'Folytatom a kvízt' })).not.toBeInTheDocument()
 
-    test('végigjátszott kvíz után nincs folytatás gomb és nincs pötty', () => {
-      renderAt(new Date(2026, 11, 10, 9))
-      const dialog = openDialog(2)
-      q.forEach((_, i) => {
-        fireEvent.click(within(dialog).getByRole('button', { name: right(i) }))
-        fireEvent.click(
-          within(dialog).getByRole('button', { name: i < q.length - 1 ? 'Következő kérdés' : 'Tovább' }),
-        )
-      })
-      expect(within(dialog).getByText('3 / 3 helyes')).toBeInTheDocument()
-      expect(within(dialog).queryByRole('button', { name: 'Folytatom a kvízt' })).not.toBeInTheDocument()
+      // A rejtvény tisztán újrapróbálható, a korábban felfedett tipp megmaradt.
+      click(again, 'Megpróbálom')
+      expect(within(again).getByText(puzzle.hints[0].hu)).toBeInTheDocument()
+      guess(again, 'snowman')
+      click(again, 'Tovább')
+      expect(within(again).getByText('Megfejtve: hóember')).toBeInTheDocument()
+      expect(within(again).queryByRole('button', { name: 'Megpróbálom' })).not.toBeInTheDocument()
 
-      fireEvent.click(within(dialog).getByRole('button', { name: 'Bezárás' }))
+      click(again, 'Bezárom')
       expect(door(2)).toHaveAccessibleName('2. ablak, nyitva')
     })
 
-    test('a 24. napon 5 kérdés van', () => {
+    test('a dialógus bezárása a vége előtt nem veszít el semmit, és a dísz megvan', () => {
+      renderAt(new Date(2026, 11, 10, 9))
+      const dialog = openDialog(2)
+      click(dialog, right(0))
+      click(dialog, 'Bezárás')
+
+      expect(screen.getByText('1 / 24 ablak nyitva')).toBeInTheDocument()
+      fireEvent.click(door(2))
+      const again = screen.getByRole('dialog')
+      expect(within(again).getByText('1 / 3 helyes')).toBeInTheDocument()
+      expect(within(again).getByText('Még hátravan')).toBeInTheDocument()
+    })
+
+    test('a 24. napon 5 kérdés és 2 rejtvény van; a kihagyás csak az aktuális rejtvényt ugorja', () => {
       renderAt(new Date(2026, 11, 24, 9))
       const dialog = openDialog(24)
       expect(within(dialog).getByText('1 / 5. kérdés')).toBeInTheDocument()
+      click(dialog, 'Kvíz kihagyása')
+
+      expect(within(dialog).getByText('1 / 2. rejtvény')).toBeInTheDocument()
+      click(dialog, 'Rejtvény kihagyása')
+      expect(within(dialog).getByText('2 / 2. rejtvény')).toBeInTheDocument()
+      expect(puzzleStatuses(24)).toEqual(['skipped', 'pending'])
+
+      guess(dialog, 'Jingle Bells')
+      click(dialog, 'Tovább')
+      expect(currentStep(dialog)).toHaveTextContent('Idézet')
+      expect(puzzleStatuses(24)).toEqual(['skipped', 'done'])
     })
 
     test('nyelvváltás nyitott dialógus közben nem veszít el állapotot', () => {
       renderAt(new Date(2026, 11, 10, 9))
       const dialog = openDialog(2)
-      fireEvent.click(within(dialog).getByRole('button', { name: right(0) }))
+      click(dialog, right(0))
       fireEvent.click(screen.getByRole('button', { name: 'Angol' }))
 
       expect(within(dialog).getByRole('heading', { level: 3 })).toHaveTextContent(q[0].question.en)
