@@ -81,9 +81,9 @@ function Page() {
         <Header>
           <Countdown target={countdownTarget()} />
         </Header>
-        {beforeStart && <StartBanner opensAt={firstDoorDate()} />}
         <Calendar
           layout={doorLayout}
+          banner={beforeStart && <StartBanner opensAt={firstDoorDate()} />}
           onOpened={startDay}
           onRevisit={(day) => setActive({ day, entry: 'revisit' })}
         />

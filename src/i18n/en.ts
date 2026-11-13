@@ -6,6 +6,7 @@ export const en: Record<MessageKey, string> = {
 
   'header.title': 'Advent 2026',
   'header.lead': 'A new door every day. Click it and see what is hiding behind!',
+  'header.taglineShort': 'A new door every day – open today’s!',
 
   'lang.switch': 'Language',
   'lang.hu': 'Hungarian',

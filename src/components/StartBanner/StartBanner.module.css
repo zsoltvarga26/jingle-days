@@ -1,18 +1,15 @@
+/* A tábla tetején, annak belső szélességében. */
 .banner {
-  margin: 0 auto clamp(1rem, 3vw, 1.5rem);
-  max-width: max-content;
-  padding: 0.55em 1.4em 0.4em;
-  border: 3px solid var(--gold);
+  margin: 0;
+  padding: 6px 14px 4px;
   border-radius: 999px;
   background: var(--snow);
   color: var(--pine-dark);
   font-weight: 700;
-  font-size: clamp(1rem, 2.6vw, 1.25rem);
+  font-size: 0.92rem;
   line-height: 1.3;
   text-align: center;
-  box-shadow:
-    0 5px 0 var(--gold-dark),
-    0 10px 20px var(--shadow);
+  box-shadow: 0 3px 0 var(--gold);
   animation: pulse 2.4s ease-in-out infinite;
 }
 
