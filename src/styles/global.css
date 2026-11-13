@@ -30,7 +30,7 @@ body {
 main {
   position: relative;
   z-index: 1;
-  max-width: 1320px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 18px clamp(12px, 3vw, 32px) 28px;
 }

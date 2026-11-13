@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useState, type ReactNode, type Ref } from 'react'
 import { useSound } from '../../audio/useSound'
 import { getDay, stepCounts } from '../../content/days'
 import type { DoorLayout } from '../../content/layout'
@@ -13,6 +13,8 @@ export interface CalendarProps {
   layout: readonly DoorLayout[]
   /** A tábla tetején, a rács fölött megjelenő felirat (a nyitási banner). */
   banner?: ReactNode
+  /** A tábla eleme, hogy a szülő a magasságához igazíthassa a fa kártyáját. */
+  boardRef?: Ref<HTMLElement>
   /** Egy ajtó első kinyitása után (a napi játék indul). */
   onOpened?: (day: number) => void
   /** Már nyitott ajtóra kattintáskor (összefoglaló). */
@@ -20,7 +22,7 @@ export interface CalendarProps {
 }
 
 /** A tábla a 24 ajtó rácsával, a megadott sorrendben és elhelyezéssel. */
-export function Calendar({ layout, banner, onOpened, onRevisit }: CalendarProps) {
+export function Calendar({ layout, banner, boardRef, onOpened, onRevisit }: CalendarProps) {
   const { t, tn } = useI18n()
   const { state, dispatch } = useProgress()
   const play = useSound()
@@ -54,7 +56,7 @@ export function Calendar({ layout, banner, onOpened, onRevisit }: CalendarProps)
   }
 
   return (
-    <section className={styles.board} aria-label={t('calendar.label')}>
+    <section ref={boardRef} className={styles.board} aria-label={t('calendar.label')}>
       {banner}
       <div className={styles.grid}>
         {layout.map((door, index) => {

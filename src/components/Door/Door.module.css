@@ -49,10 +49,10 @@
 @media (min-width: 1100px) {
   .day {
     grid-area: var(--area-wide);
-    --prize-size: clamp(1.5rem, min(6vw, 5.5dvh), 3.4rem);
-    --prize-size-big: clamp(3rem, min(12vw, 11dvh), 7rem);
-    --num-size: clamp(0.85rem, min(1.4vw, 2.4dvh), 1.15rem);
-    --num-size-big: clamp(1.1rem, min(2vw, 3.4dvh), 1.6rem);
+    --prize-size: clamp(1.5rem, min(6vw, 5.5dvh), 4.5rem);
+    --prize-size-big: clamp(3rem, min(12vw, 11dvh), 9rem);
+    --num-size: clamp(0.85rem, min(1.4vw, 2.4dvh), 1.4rem);
+    --num-size-big: clamp(1.1rem, min(2vw, 3.4dvh), 1.9rem);
     --front-pad: 0.55rem 0.7rem;
   }
 }
