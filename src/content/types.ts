@@ -80,9 +80,4 @@ export interface DayContent {
   emoji: EmojiPuzzle[]
   quote: Quote
   ornament: Ornament
-  /**
-   * Ideiglenes helykitöltő tartalom, amíg a nap nincs megírva.
-   * Élesítés előtt egyetlen nap sem maradhat ilyen (a tartalomteszt számon tartja).
-   */
-  draft?: boolean
 }

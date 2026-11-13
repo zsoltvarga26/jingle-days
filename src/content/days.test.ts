@@ -5,7 +5,6 @@ import { LANGS, type L } from './types'
 
 /**
  * Tartalomteszt (docs/03-tartalom-utmutato.md, „Amit a tartalomteszt ellenőriz”).
- * A válaszok normalizálására épülő ellenőrzések a 3. fázisban, a normalize()-zal együtt jönnek.
  */
 const filled = (text: L) => LANGS.every((lang) => typeof text[lang] === 'string' && text[lang].trim() !== '')
 const dd = (day: number) => String(day).padStart(2, '0')
@@ -88,7 +87,7 @@ describe('emoji-rejtvények', () => {
 })
 
 describe('emoji-rejtvények válaszai (normalizálva)', () => {
-  const puzzles = days.flatMap((d) => d.emoji.map((p) => ({ puzzle: p, draft: d.draft === true })))
+  const puzzles = days.flatMap((d) => d.emoji.map((p) => ({ puzzle: p })))
 
   test('normalizálás után egyik elfogadott válasz sem üres', () => {
     for (const { puzzle } of puzzles) {
@@ -108,9 +107,8 @@ describe('emoji-rejtvények válaszai (normalizálva)', () => {
     }
   })
 
-  test('a megírt napok tippjei nem árulják el a megfejtést', () => {
-    for (const { puzzle, draft } of puzzles) {
-      if (draft) continue
+  test('a tippek nem árulják el a megfejtést', () => {
+    for (const { puzzle } of puzzles) {
       const answers = [...acceptedAnswers(puzzle)]
       for (const hint of puzzle.hints) {
         for (const lang of LANGS) {
@@ -147,21 +145,88 @@ describe('idézetek és díszek', () => {
   })
 })
 
-describe('megírt és helykitöltő napok', () => {
-  const drafts = days.filter((d) => d.draft).map((d) => d.day)
-
-  test('a megírt napok szövegei nem lépik túl a hosszkorlátot', () => {
-    for (const day of days.filter((d) => !d.draft)) {
+describe('hosszkorlátok', () => {
+  test('a kérdések, a válaszok és az idézetek kiférnek mobilon', () => {
+    for (const day of days) {
       for (const lang of LANGS) {
         for (const q of day.quiz) {
           expect(q.question[lang].length, `${q.id} kérdés (${lang})`).toBeLessThanOrEqual(140)
-          for (const o of q.options) expect(o[lang].length, `${q.id} válasz (${lang})`).toBeLessThanOrEqual(40)
+          for (const o of q.options) {
+            expect(o[lang].length, `${q.id} válasz (${lang}): ${o[lang]}`).toBeLessThanOrEqual(40)
+          }
         }
         expect(day.quote.text[lang].length, `${day.day}. nap idézet (${lang})`).toBeLessThanOrEqual(220)
       }
     }
   })
+})
 
-  // Élesítés előtt egyetlen helykitöltő nap sem maradhat: ekkor ez a teszt élesíthető.
-  test.todo(`még ${drafts.length} nap helykitöltő tartalommal fut: ${drafts.join(', ')}`)
+describe('elosztás (docs/03-tartalom-utmutato.md)', () => {
+  const questions = days.flatMap((d) => d.quiz)
+  const puzzles = days.flatMap((d) => d.emoji)
+  const count = <T,>(items: readonly T[]) => {
+    const totals = new Map<T, number>()
+    for (const item of items) totals.set(item, (totals.get(item) ?? 0) + 1)
+    return totals
+  }
+
+  test('az öt kvízkategória nagyjából egyenletesen oszlik el a 74 kérdés között', () => {
+    const totals = count(questions.map((q) => q.category))
+    expect([...totals.keys()].sort()).toEqual(['erdekesseg', 'etel', 'film', 'hagyomany', 'zene'])
+    for (const [category, total] of totals) {
+      expect(total, category).toBeGreaterThanOrEqual(13)
+      expect(total, category).toBeLessThanOrEqual(16)
+    }
+  })
+
+  test('egy napon belül minden kérdés más kategóriából jön', () => {
+    for (const day of days) {
+      const categories = day.quiz.map((q) => q.category)
+      expect(new Set(categories).size, `${day.day}. nap`).toBe(categories.length)
+    }
+  })
+
+  test('a három rejtvényfajta nagyjából egyenletesen oszlik el a 25 rejtvény között', () => {
+    const totals = count(puzzles.map((p) => p.kind))
+    for (const kind of ['szo', 'film', 'dal'] as const) {
+      expect(totals.get(kind) ?? 0, kind).toBeGreaterThanOrEqual(7)
+      expect(totals.get(kind) ?? 0, kind).toBeLessThanOrEqual(10)
+    }
+  })
+
+  test('a 24. nap két rejtvénye két különböző fajta', () => {
+    const [first, second] = days[23].emoji
+    expect(first.kind).not.toBe(second.kind)
+  })
+
+  test('a helyes válasz egyik kérdésnél sem a leghosszabb mindkét nyelven', () => {
+    // A „ne a leghosszabb legyen a helyes” szabály: ha mindkét nyelven az, az feltűnő.
+    const tells = questions.filter((q) =>
+      LANGS.every((lang) => {
+        const lengths = q.options.map((o) => o[lang].length)
+        const correct = lengths[q.correctIndex]
+        return lengths.every((length, index) => index === q.correctIndex || length < correct - 8)
+      }),
+    )
+    expect(tells.map((q) => q.id)).toEqual([])
+  })
+
+  test('egy rejtvény megfejtése nem szerepel ugyanannak a napnak a kvízében', () => {
+    for (const day of days) {
+      for (const lang of LANGS) {
+        const quizText = normalize(
+          day.quiz
+            .flatMap((q) => [q.question[lang], ...q.options.map((o) => o[lang]), q.explanation?.[lang] ?? ''])
+            .join(' '),
+        )
+        for (const p of day.emoji) {
+          for (const answer of p.answers[lang].map(normalize)) {
+            // A nagyon rövid alakok (pl. „elf”, „szán”) véletlenül is előfordulhatnak szavak belsejében.
+            if (answer.length < 6) continue
+            expect(quizText.includes(answer), `${p.id} (${lang}): „${answer}”`).toBe(false)
+          }
+        }
+      }
+    }
+  })
 })
