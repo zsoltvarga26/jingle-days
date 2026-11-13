@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { SoundManager } from './audio/SoundManager'
 import { Calendar } from './components/Calendar/Calendar'
 import { Countdown } from './components/Countdown/Countdown'
@@ -22,9 +22,17 @@ import styles from './App.module.css'
 
 /** Ennyi idő múlva nyílik a dialógus az ajtó kinyitása után. */
 const DOOR_OPEN_MS = 900
+/** Díszítéskor ennyi ideig látszik az arany keret a fa kártyája körül. */
+const DECORATE_MS = 1400
+/** Efölött a kalendárium és a fa egymás mellett áll (lásd App.module.css). */
+const WIDE_QUERY = '(min-width: 1100px)'
 
 function reducedMotion(): boolean {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+}
+
+function isWideLayout(): boolean {
+  return window.matchMedia?.(WIDE_QUERY).matches ?? false
 }
 
 /** Az éppen nyitott napi dialógus: melyik nap, és most nyílt-e ki az ajtó. */
@@ -48,6 +56,16 @@ function Page() {
   const openTimer = useRef<number | undefined>(undefined)
   useEffect(() => () => window.clearTimeout(openTimer.current), [])
 
+  // Amíg egy dísz a helyére esik, arany keret jelzi a fa kártyáján, hol történik a jutalom.
+  const [decorating, setDecorating] = useState(false)
+  const decorateTimer = useRef<number | undefined>(undefined)
+  useEffect(() => () => window.clearTimeout(decorateTimer.current), [])
+  const decorate = useCallback(() => {
+    setDecorating(true)
+    window.clearTimeout(decorateTimer.current)
+    decorateTimer.current = window.setTimeout(() => setDecorating(false), DECORATE_MS)
+  }, [])
+
   const startDay = (day: number) => {
     setStarting(day)
     window.clearTimeout(openTimer.current)
@@ -63,8 +81,9 @@ function Page() {
     setStarting(null)
     if (day === undefined) return
 
-    // Ha a nap dísze még nincs a fán, az oldal a fához görget, ahol a dísz a helyére esik.
-    const toTree = state.days[day]?.ornamentShown === false
+    // Ha a nap dísze még nincs a fán, keskeny nézetben az oldal a fához görget, ahol a dísz
+    // a helyére esik. Széles nézetben a fa a kalendárium mellett eleve látszik.
+    const toTree = state.days[day]?.ornamentShown === false && !isWideLayout()
 
     // A fókusz visszakerül a megnyitó ajtóra (Safari kattintásra nem fókuszál gombot,
     // ezért nem bízzuk csak a <dialog> beépített viselkedésére).
@@ -99,10 +118,11 @@ function Page() {
             onOpened={startDay}
             onRevisit={(day) => setActive({ day, entry: 'revisit' })}
           />
-          <TreePanel>
+          <TreePanel decorating={decorating}>
             <TreeScene
               hold={active?.day ?? starting ?? undefined}
               onShare={() => setSharing(true)}
+              onDecorate={decorate}
             />
           </TreePanel>
         </div>

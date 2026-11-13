@@ -327,6 +327,49 @@ describe('App', () => {
       expect(ornament()).toHaveAttribute('data-state', 'earned')
     })
 
+    test('díszítéskor arany keret kerül a fa kártyájára, és kb. 1,4 s múlva eltűnik', () => {
+      renderAt(new Date(2026, 11, 10, 9))
+      const framed = () => document.querySelector('[data-decorating]')
+      const dialog = openDialog(2)
+      expect(framed()).not.toBeInTheDocument()
+
+      click(dialog, 'Bezárás')
+      expect(framed()).toContainElement(document.querySelector('[data-ornament="d02-bauble-gold"]'))
+      act(() => {
+        vi.advanceTimersByTime(1300)
+      })
+      expect(framed()).toBeInTheDocument()
+      act(() => {
+        vi.advanceTimersByTime(200)
+      })
+      expect(framed()).not.toBeInTheDocument()
+
+      // Újra megnyitva és bezárva nincs új dísz, így keret sincs.
+      fireEvent.click(door(2))
+      click(screen.getByRole('dialog'), 'Bezárom')
+      expect(framed()).not.toBeInTheDocument()
+    })
+
+    test('széles nézetben a dialógus bezárása nem görget, a dísz és a keret azonnal indul', () => {
+      vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('min-width') }))
+      const scrolls = vi.fn()
+      Element.prototype.scrollIntoView = scrolls
+      try {
+        renderAt(new Date(2026, 11, 10, 9))
+        click(openDialog(2), 'Bezárás')
+
+        expect(scrolls).not.toHaveBeenCalled()
+        expect(document.querySelector('[data-ornament="d02-bauble-gold"]')).toHaveAttribute(
+          'data-state',
+          'dropping',
+        )
+        expect(document.querySelector('[data-decorating]')).toBeInTheDocument()
+        expect(door(2)).toHaveFocus()
+      } finally {
+        vi.unstubAllGlobals()
+      }
+    })
+
     test('az elindult díszanimáció akkor is lezárul, ha a fa közben kikerül a képből', () => {
       // Ál-IntersectionObserver: a teszt maga mondja meg, látszik-e a fa.
       let report: (visible: boolean) => void = () => {}
