@@ -86,10 +86,6 @@
   color: var(--ink);
 }
 
-.shareRow {
-  margin: 0 0 0.8rem;
-}
-
 /* A megosztás a fő művelet itt: teli gomb. */
 .share {
   border-color: var(--pine);
