@@ -22,6 +22,11 @@ export interface TreePalette {
 
 /** Melyik paletta-érték melyik tokennek felel meg. */
 export const paletteTokens = {
+  bg: '--bg',
+  bg2: '--bg-2',
+  ink: '--ink',
+  inkSoft: '--ink-soft',
+  pine: '--pine',
   green: '--green',
   treeMid: '--tree-mid',
   greenDark: '--green-dark',
@@ -44,6 +49,11 @@ export const paletteTokens = {
 
 /** A tokenek világos módú értékei. */
 export const paletteValues: Record<keyof typeof paletteTokens, string> = {
+  bg: '#e4f3ec',
+  bg2: '#cfe9de',
+  ink: '#123c30',
+  inkSoft: '#3f6b5d',
+  pine: '#146b4e',
   green: '#2fa374',
   treeMid: '#258a62',
   greenDark: '#1b6e4d',

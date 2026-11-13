@@ -5,6 +5,7 @@ import { Countdown } from './components/Countdown/Countdown'
 import { DayDialog } from './components/DayDialog/DayDialog'
 import { Header } from './components/Header/Header'
 import { ProgressSummary } from './components/ProgressSummary/ProgressSummary'
+import { ShareCard } from './components/ShareCard/ShareCard'
 import { Snowfall } from './components/Snowfall/Snowfall'
 import { StartBanner } from './components/StartBanner/StartBanner'
 import { TREE_ID } from './components/TreeScene/geometry'
@@ -36,6 +37,7 @@ function Page() {
   const [active, setActive] = useState<ActiveDay | null>(null)
   // A most kinyitott ajtó napja, amíg a dialógusa meg nem nyílik: a dísze addig is vár.
   const [starting, setStarting] = useState<number | null>(null)
+  const [sharing, setSharing] = useState(false)
 
   // Az első nyitásnál a dialógus megvárja, amíg az ajtó kitárul (0,8 s az animáció).
   const openTimer = useRef<number | undefined>(undefined)
@@ -85,12 +87,13 @@ function Page() {
           onOpened={startDay}
           onRevisit={(day) => setActive({ day, entry: 'revisit' })}
         />
-        <TreeScene hold={active?.day ?? starting ?? undefined} />
-        <ProgressSummary />
+        <TreeScene hold={active?.day ?? starting ?? undefined} onShare={() => setSharing(true)} />
+        <ProgressSummary onShare={() => setSharing(true)} />
       </main>
       {active && (
         <DayDialog key={active.day} day={active.day} entry={active.entry} onClose={closeDialog} />
       )}
+      {sharing && <ShareCard onClose={() => setSharing(false)} />}
     </>
   )
 }

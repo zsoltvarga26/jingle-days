@@ -76,3 +76,22 @@
   font-weight: 700;
   color: var(--ink);
 }
+
+.shareRow {
+  margin: 0 0 0.8rem;
+}
+
+/* A megosztás a fő művelet itt: teli gomb. */
+.share {
+  border-color: var(--pine);
+  background: var(--pine);
+  color: var(--snow);
+  font-weight: 700;
+  box-shadow: 0 4px 0 var(--pine-dark);
+}
+
+@media (hover: hover) {
+  .share:not(:disabled):hover {
+    background: var(--pine-dark);
+  }
+}

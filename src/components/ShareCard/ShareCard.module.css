@@ -1,0 +1,46 @@
+.share {
+  display: grid;
+  gap: 0.9rem;
+}
+
+/* A kártya 1080 × 1350 px, azaz 4 : 5 arányú; a hely a kép elkészülte előtt is megvan. */
+.preview {
+  display: grid;
+  place-items: center;
+  width: min(100%, 19rem);
+  aspect-ratio: 4 / 5;
+  margin: 0 auto;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--gold) 14%, var(--snow));
+  overflow: hidden;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.placeholder {
+  margin: 0;
+  padding: 1rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--on-snow-soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.notice {
+  margin: 0;
+  min-height: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--green-dark);
+}

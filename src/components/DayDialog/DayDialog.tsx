@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState, type MouseEvent } from 'react'
+import { useRef, useState } from 'react'
 import { useSound } from '../../audio/useSound'
 import { getDay } from '../../content/days'
 import { useI18n } from '../../i18n/useI18n'
 import { burstConfetti } from '../../lib/confetti'
 import { useProgress } from '../../state/useProgress'
 import { EmojiStep } from '../EmojiStep/EmojiStep'
+import { Modal, type ModalHandle } from '../Modal/Modal'
 import { QuizStep } from '../QuizStep/QuizStep'
 import { QuoteStep } from '../QuoteStep/QuoteStep'
 import styles from './DayDialog.module.css'
@@ -36,27 +37,15 @@ export function DayDialog({ day, entry, onClose }: DayDialogProps) {
   const { t } = useI18n()
   const { state, dispatch } = useProgress()
   const play = useSound()
-  const dialog = useRef<HTMLDialogElement>(null)
+  const modal = useRef<ModalHandle>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
   const [view, setView] = useState<View>({ step: entry === 'fresh' ? 'quiz' : 'summary' })
 
   const content = getDay(day)
   const progress = state.days[day]
-
-  // Natív modális dialógus: fókuszcsapda és Esc-re bezárás a böngészőtől jön.
-  useEffect(() => {
-    const element = dialog.current
-    if (element && !element.open) element.showModal()
-  }, [])
-
-  // A háttérre (a dialógus saját felületén kívülre) kattintva is bezárul.
-  const closeOnBackdrop = (event: MouseEvent<HTMLDialogElement>) => {
-    if (event.target === dialog.current) dialog.current?.close()
-  }
-
   if (!progress) return null
 
-  const close = () => dialog.current?.close()
+  const close = () => modal.current?.close()
   const celebrate = () => burstConfetti(canvas.current)
 
   // Első nyitáskor a lépések sorban jönnek; visszatéréskor egy rész befejezése
@@ -75,102 +64,89 @@ export function DayDialog({ day, entry, onClose }: DayDialogProps) {
   const current: Step | null = view.step === 'summary' ? null : view.step
 
   return (
-    <dialog
-      ref={dialog}
-      className={styles.dialog}
-      aria-labelledby="day-dialog-title"
+    <Modal
+      ref={modal}
+      title={t('dialog.title', { n: day })}
       onClose={onClose}
-      onClick={closeOnBackdrop}
+      // A konfetti a dialóguson belül van: a modális dialógus a böngésző legfelső rétege.
+      overlay={<canvas ref={canvas} className={styles.confetti} aria-hidden="true" />}
     >
-      <canvas ref={canvas} className={styles.confetti} aria-hidden="true" />
+      {current && (
+        <ol className={styles.steps} aria-label={t('steps.label')}>
+          {STEPS.map((step) => (
+            <li
+              key={step}
+              className={styles.step}
+              data-state={
+                step === current
+                  ? 'current'
+                  : STEPS.indexOf(step) < STEPS.indexOf(current)
+                    ? 'done'
+                    : 'todo'
+              }
+              aria-current={step === current ? 'step' : undefined}
+            >
+              {t(`step.${step}`)}
+            </li>
+          ))}
+        </ol>
+      )}
 
-      <div className={styles.sheet}>
-        <header className={styles.header}>
-          <h2 id="day-dialog-title" className={styles.title}>
-            {t('dialog.title', { n: day })}
-          </h2>
-          <button type="button" className={styles.close} aria-label={t('dialog.close')} onClick={close}>
-            <span aria-hidden="true">×</span>
-          </button>
-        </header>
+      {view.step === 'quiz' && (
+        <QuizStep
+          questions={content.quiz}
+          progress={progress.quiz}
+          onAnswer={(question, choice) => {
+            dispatch({ type: 'ANSWER_QUESTION', day, question, choice })
+            play(choice === content.quiz[question].correctIndex ? 'success' : 'wrong')
+          }}
+          onCorrect={celebrate}
+          onSkip={() => {
+            dispatch({ type: 'SKIP_QUIZ', day })
+            after('quiz')
+          }}
+          onDone={() => after('quiz')}
+        />
+      )}
 
-        {current && (
-          <ol className={styles.steps} aria-label={t('steps.label')}>
-            {STEPS.map((step) => (
-              <li
-                key={step}
-                className={styles.step}
-                data-state={
-                  step === current
-                    ? 'current'
-                    : STEPS.indexOf(step) < STEPS.indexOf(current)
-                      ? 'done'
-                      : 'todo'
-                }
-                aria-current={step === current ? 'step' : undefined}
-              >
-                {t(`step.${step}`)}
-              </li>
-            ))}
-          </ol>
-        )}
+      {view.step === 'emoji' && (
+        <EmojiStep
+          puzzles={content.emoji}
+          progress={progress.emoji}
+          start={view.start}
+          onGuess={(puzzle, correct) => {
+            dispatch({ type: 'SUBMIT_GUESS', day, puzzle, correct })
+            play(correct ? 'solved' : 'wrong')
+          }}
+          onRevealHint={(puzzle) => {
+            dispatch({ type: 'REVEAL_HINT', day, puzzle })
+            play('hint')
+          }}
+          onSkip={(puzzle) => dispatch({ type: 'SKIP_EMOJI', day, puzzle })}
+          onSolved={celebrate}
+          onDone={() => after('emoji')}
+        />
+      )}
 
-        {view.step === 'quiz' && (
-          <QuizStep
-            questions={content.quiz}
-            progress={progress.quiz}
-            onAnswer={(question, choice) => {
-              dispatch({ type: 'ANSWER_QUESTION', day, question, choice })
-              play(choice === content.quiz[question].correctIndex ? 'success' : 'wrong')
-            }}
-            onCorrect={celebrate}
-            onSkip={() => {
-              dispatch({ type: 'SKIP_QUIZ', day })
-              after('quiz')
-            }}
-            onDone={() => after('quiz')}
-          />
-        )}
+      {view.step === 'quote' && (
+        <QuoteStep quote={content.quote} ornament={content.ornament} onFinish={close} />
+      )}
 
-        {view.step === 'emoji' && (
-          <EmojiStep
-            puzzles={content.emoji}
-            progress={progress.emoji}
-            start={view.start}
-            onGuess={(puzzle, correct) => {
-              dispatch({ type: 'SUBMIT_GUESS', day, puzzle, correct })
-              play(correct ? 'solved' : 'wrong')
-            }}
-            onRevealHint={(puzzle) => {
-              dispatch({ type: 'REVEAL_HINT', day, puzzle })
-              play('hint')
-            }}
-            onSkip={(puzzle) => dispatch({ type: 'SKIP_EMOJI', day, puzzle })}
-            onSolved={celebrate}
-            onDone={() => after('emoji')}
-          />
-        )}
-
-        {view.step === 'quote' && (
-          <QuoteStep quote={content.quote} ornament={content.ornament} onFinish={close} />
-        )}
-
-        {view.step === 'summary' && (
-          <DaySummary
-            content={content}
-            progress={progress}
-            onResumeQuiz={() => {
-              dispatch({ type: 'RESUME_STEP', day, step: 'quiz' })
-              setView({ step: 'quiz' })
-            }}
-            onResumePuzzle={(puzzle) => {
-              dispatch({ type: 'RESUME_STEP', day, step: 'emoji', puzzle })
-              setView({ step: 'emoji', start: puzzle })
-            }}
-            onClose={close}
-          />
-        )}
-      </div>
-    </dialog>
+      {view.step === 'summary' && (
+        <DaySummary
+          content={content}
+          progress={progress}
+          onResumeQuiz={() => {
+            dispatch({ type: 'RESUME_STEP', day, step: 'quiz' })
+            setView({ step: 'quiz' })
+          }}
+          onResumePuzzle={(puzzle) => {
+            dispatch({ type: 'RESUME_STEP', day, step: 'emoji', puzzle })
+            setView({ step: 'emoji', start: puzzle })
+          }}
+          onClose={close}
+        />
+      )}
+    </Modal>
   )
 }

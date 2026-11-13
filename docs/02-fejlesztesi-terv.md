@@ -145,11 +145,11 @@ Hatókör: `lib/shareCard.ts`, `ShareCard`.
 
 **Kész, ha:**
 
-- [ ] A PNG 1080 × 1350 px, Baloo 2 betűvel, sötét módban is világos színekkel; a fa a tényleges díszekkel látszik (**B3**).
-- [ ] A kép a dialógus megnyitásakor készül el, a megosztás gomb kész fájlt ad át (**B4**).
-- [ ] Mobilon (Android Chrome, iOS Safari) a rendszer megosztási menüje nyílik; asztalon „Kép letöltése” és „Szöveg másolása” jelenik meg.
-- [ ] A kártya szövege az aktív nyelvű; 0 megnyitott nappal is értelmes.
-- [ ] `public/og-image.png` és az `og:` metaadatok a helyükön vannak; a link előnézete egy csevegőalkalmazásban ellenőrizve.
+- [x] A PNG 1080 × 1350 px, Baloo 2 betűvel, sötét módban is világos színekkel; a fa a tényleges díszekkel látszik (**B3**).
+- [x] A kép a dialógus megnyitásakor készül el, a megosztás gomb kész fájlt ad át (**B4**).
+- [ ] Mobilon (Android Chrome, iOS Safari) a rendszer megosztási menüje nyílik; asztalon „Kép letöltése” és „Szöveg másolása” jelenik meg. *Asztalon ellenőrizve; a rendszer megosztási menüjét valódi telefonon még ki kell próbálni.*
+- [x] A kártya szövege az aktív nyelvű; 0 megnyitott nappal is értelmes.
+- [ ] `public/og-image.png` és az `og:` metaadatok a helyükön vannak; a link előnézete egy csevegőalkalmazásban ellenőrizve. *A kép és a metaadatok megvannak; az `og:image` címét élesítéskor a végleges, teljes URL-re kell átírni, és az előnézetet csak ezután lehet csevegőalkalmazásban ellenőrizni.*
 
 ## 7. fázis – Tartalom (párhuzamosan)
 

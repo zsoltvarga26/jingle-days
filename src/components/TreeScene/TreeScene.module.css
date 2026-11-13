@@ -49,3 +49,26 @@
   line-height: 1.15;
   color: var(--red);
 }
+
+.shareRow {
+  margin: 0.9rem 0 0;
+}
+
+.share {
+  min-height: 2.9rem;
+  padding: 0.5em 1.6em 0.35em;
+  border: 0;
+  border-radius: 999px;
+  background: var(--red);
+  color: var(--snow);
+  font: inherit;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--red-dark);
+}
+
+.share:focus-visible {
+  outline: 4px solid var(--gold);
+  outline-offset: 3px;
+}

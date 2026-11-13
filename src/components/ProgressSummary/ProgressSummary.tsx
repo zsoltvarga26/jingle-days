@@ -6,10 +6,9 @@ import { useProgress } from '../../state/useProgress'
 import styles from './ProgressSummary.module.css'
 
 /**
- * „X / 24 ablak nyitva”, pontszám és a visszaállítás megerősítéssel.
- * A megosztás gomb a 6. fázisban kerül ide.
+ * „X / 24 ablak nyitva”, pontszám, megosztás gomb és a visszaállítás megerősítéssel.
  */
-export function ProgressSummary() {
+export function ProgressSummary({ onShare }: { onShare: () => void }) {
   const { t, tn } = useI18n()
   const { state, dispatch } = useProgress()
   const [confirming, setConfirming] = useState(false)
@@ -22,6 +21,12 @@ export function ProgressSummary() {
       <p className={styles.progress} aria-live="polite">
         <span className={styles.pill}>{t('progress.opened', { n: opened })}</span>
         <span className={styles.pill}>{tn('progress.points', score.points)}</span>
+      </p>
+
+      <p className={styles.shareRow}>
+        <button type="button" className={`${styles.button} ${styles.share}`} onClick={onShare}>
+          {t('share.open')}
+        </button>
       </p>
 
       {confirming ? (
