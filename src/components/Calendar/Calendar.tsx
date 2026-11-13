@@ -17,7 +17,7 @@ export interface CalendarProps {
   onRevisit?: (day: number) => void
 }
 
-/** A 24 ajtó rácsa a megadott sorrendben és méretekkel. */
+/** A tábla a 24 ajtó rácsával, a megadott sorrendben és elhelyezéssel. */
 export function Calendar({ layout, onOpened, onRevisit }: CalendarProps) {
   const { t, tn } = useI18n()
   const { state, dispatch } = useProgress()
@@ -52,38 +52,40 @@ export function Calendar({ layout, onOpened, onRevisit }: CalendarProps) {
   }
 
   return (
-    <section className={styles.calendar} aria-label={t('calendar.label')}>
-      {layout.map((door, index) => {
-        const status = statusOf(door.day)
-        const message = status === 'locked' ? lockedMessage(door.day) : undefined
-        const progress = state.days[door.day]
-        const skipped = progress ? hasSkippedStep(progress) : false
-        const ariaLabel =
-          status === 'locked'
-            ? t('door.aria.locked', { n: door.day, when: message ?? '' })
-            : status === 'closed'
-              ? t('door.aria.closed', { n: door.day })
-              : t(skipped ? 'door.aria.openSkipped' : 'door.aria.open', { n: door.day })
+    <section className={styles.board} aria-label={t('calendar.label')}>
+      <div className={styles.grid}>
+        {layout.map((door, index) => {
+          const status = statusOf(door.day)
+          const message = status === 'locked' ? lockedMessage(door.day) : undefined
+          const progress = state.days[door.day]
+          const skipped = progress ? hasSkippedStep(progress) : false
+          const ariaLabel =
+            status === 'locked'
+              ? t('door.aria.locked', { n: door.day, when: message ?? '' })
+              : status === 'closed'
+                ? t('door.aria.closed', { n: door.day })
+                : t(skipped ? 'door.aria.openSkipped' : 'door.aria.open', { n: door.day })
 
-        return (
-          <Door
-            key={door.day}
-            layout={door}
-            ornament={getDay(door.day).ornament}
-            index={index}
-            status={status}
-            ariaLabel={ariaLabel}
-            lockedMessage={message}
-            hasSkipped={skipped}
-            onOpen={open}
-            onRevisit={onRevisit}
-            onLockedClick={() => {
-              play('locked')
-              setAnnouncement(`${t('door.label', { n: door.day })}: ${message}`)
-            }}
-          />
-        )
-      })}
+          return (
+            <Door
+              key={door.day}
+              layout={door}
+              ornament={getDay(door.day).ornament}
+              index={index}
+              status={status}
+              ariaLabel={ariaLabel}
+              lockedMessage={message}
+              hasSkipped={skipped}
+              onOpen={open}
+              onRevisit={onRevisit}
+              onLockedClick={() => {
+                play('locked')
+                setAnnouncement(`${t('door.label', { n: door.day })}: ${message}`)
+              }}
+            />
+          )
+        })}
+      </div>
       <p className="sr-only" aria-live="polite">
         {announcement}
       </p>

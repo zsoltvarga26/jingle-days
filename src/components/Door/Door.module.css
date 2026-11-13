@@ -17,6 +17,18 @@
   outline: none;
   -webkit-tap-highlight-color: transparent;
 
+  /* A rácsbeli hely a content/layout.ts-ből jön: keskenyen 5 × 7, szélesen 7 × 5 cella. */
+  grid-area: var(--area-narrow);
+  min-width: 0;
+  min-height: 0;
+
+  /* A cellához igazodó méretek (ikon, számtábla, belső margó); szélesen felülíródnak. */
+  --prize-size: clamp(1.5rem, 7vw, 3.4rem);
+  --prize-size-big: clamp(3rem, 14vw, 7rem);
+  --num-size: clamp(0.8rem, 3.2vw, 1.15rem);
+  --num-size-big: clamp(1rem, 4.5vw, 1.6rem);
+  --front-pad: clamp(0.3rem, 1.2vw, 0.55rem) clamp(0.35rem, 1.5vw, 0.7rem);
+
   /* Betöltéskori belépés: az ajtók egymás után „lepottyannak”. */
   animation: drop 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) both;
   animation-delay: calc(var(--i) * 45ms);
@@ -33,18 +45,16 @@
   }
 }
 
-.normal {
-  grid-column: span 1;
-}
-.wide {
-  grid-column: span 2;
-}
-.tall {
-  grid-row: span 2;
-}
-.big {
-  grid-column: span 2;
-  grid-row: span 2;
+/* Széles nézet: a tábla a képernyő magasságához is igazodik, ezért a méretek is. */
+@media (min-width: 1100px) {
+  .day {
+    grid-area: var(--area-wide);
+    --prize-size: clamp(1.5rem, min(6vw, 5.5dvh), 3.4rem);
+    --prize-size-big: clamp(3rem, min(12vw, 11dvh), 7rem);
+    --num-size: clamp(0.85rem, min(1.4vw, 2.4dvh), 1.15rem);
+    --num-size-big: clamp(1.1rem, min(2vw, 3.4dvh), 1.6rem);
+    --front-pad: 0.55rem 0.7rem;
+  }
 }
 
 .raised {
@@ -63,13 +73,13 @@
   place-items: center;
   color: var(--inside-ink);
   font-weight: 800;
-  font-size: clamp(2.6rem, 6vw, 3.4rem);
+  font-size: var(--prize-size);
   line-height: 1;
   overflow: hidden;
 }
 
 .big .inside {
-  font-size: clamp(4.5rem, 12vw, 7rem);
+  font-size: var(--prize-size-big);
 }
 
 /* A megkapott dísz az ajtó mögött. */
@@ -184,7 +194,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  padding: 0.55rem 0.7rem;
+  padding: var(--front-pad);
   overflow: hidden;
 }
 
@@ -234,14 +244,14 @@
   background: var(--snow);
   color: var(--red-dark);
   font-weight: 800;
-  font-size: 1.15rem;
+  font-size: var(--num-size);
   line-height: 1.5;
   text-align: center;
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
 }
 
 .big .num {
-  font-size: 1.6rem;
+  font-size: var(--num-size-big);
 }
 
 .back {
@@ -269,12 +279,28 @@
 [data-color='pink'] {
   --c: var(--pink);
   --cd: var(--pink-dark);
-  --r: var(--pine);
+  /* Nem zöld: a szalag ne olvadjon bele a zöld táblába. */
+  --r: var(--red);
 }
 [data-color='green'] {
   --c: var(--green);
   --cd: var(--green-dark);
   --r: var(--gold);
+}
+[data-color='blue'] {
+  --c: var(--orn-blue);
+  --cd: var(--orn-blue-dark);
+  --r: var(--gold);
+}
+[data-color='purple'] {
+  --c: var(--purple);
+  --cd: var(--purple-dark);
+  --r: var(--gold);
+}
+[data-color='brown'] {
+  --c: var(--gingerbread);
+  --cd: var(--trunk);
+  --r: var(--snow);
 }
 
 [data-pattern='dots'] {
@@ -312,14 +338,14 @@
   }
 }
 
-/* A fedél kitárul, majd elhalványul, hogy ne takarja a szomszédos ajtókat. */
+/* A fedél kitárul, és már nyílás közben elhalványul, hogy ne takarja a szomszédos ajtókat. */
 .open .door {
   transform: rotateY(-112deg);
   opacity: 0;
   pointer-events: none;
   transition:
     transform 0.8s cubic-bezier(0.5, 0, 0.2, 1.2),
-    opacity 0.45s ease 0.6s;
+    opacity 0.3s ease 0.2s;
 }
 
 .open .front::after {
@@ -388,7 +414,8 @@
   top: 50%;
   z-index: 5;
   width: max-content;
-  max-width: calc(100% - 10px);
+  /* Kis cellában a buborék túlnyúlhat az ajtón, hogy olvasható maradjon. */
+  max-width: max(calc(100% - 10px), 6.5rem);
   transform: translate(-50%, -50%);
   padding: 0.35em 0.75em 0.2em;
   border-radius: 14px;
