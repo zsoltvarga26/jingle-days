@@ -44,8 +44,6 @@ export interface TreeSceneProps {
    * a dialógus bezárását, nem esik le a háttérben.
    */
   hold?: number
-  /** A kész fa alatt felajánlott megosztás. */
-  onShare?: () => void
   /** Amikor egy (vagy több) dísz elindul a fára: ekkor jelenik meg az arany keret. */
   onDecorate?: () => void
 }
@@ -56,7 +54,7 @@ export interface TreeSceneProps {
  * Egy dísz az ajtó nyitásakor jár, de a fára csak akkor kerül fel, amikor a játékos látja:
  * a dialógus bezárása után, vagy – ha a nap félbeszakadt – a következő betöltéskor.
  */
-export function TreeScene({ hold, onShare, onDecorate }: TreeSceneProps) {
+export function TreeScene({ hold, onDecorate }: TreeSceneProps) {
   const { t } = useI18n()
   const { state, dispatch } = useProgress()
   const play = useSound()
@@ -141,17 +139,7 @@ export function TreeScene({ hold, onShare, onDecorate }: TreeSceneProps) {
           label={t('tree.label', { n: count })}
         />
       </div>
-      <p className={styles.count} aria-live="polite">
-        <span className={styles.pill}>{t('tree.count', { n: count })}</span>
-      </p>
       {complete && <p className={styles.complete}>{t('tree.complete')}</p>}
-      {complete && onShare && (
-        <p className={styles.shareRow}>
-          <button type="button" className={styles.share} onClick={onShare}>
-            {t('share.open')}
-          </button>
-        </p>
-      )}
     </section>
   )
 }

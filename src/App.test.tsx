@@ -61,7 +61,7 @@ describe('App', () => {
     const first = renderAt(new Date(2026, 11, 10, 9))
     fireEvent.click(door(3))
     expect(door(3)).toHaveAttribute('data-status', 'open')
-    expect(screen.getByText('1 / 24 ablak nyitva')).toBeInTheDocument()
+    expect(screen.getByText('1 / 24 dísz a fán')).toBeInTheDocument()
     expect(JSON.parse(window.localStorage.getItem(SAVE_KEY)!).days[3].quiz.answers).toHaveLength(3)
 
     first.unmount()
@@ -72,7 +72,7 @@ describe('App', () => {
   test('elrontott mentéssel is betölt, üres előrehaladással', () => {
     window.localStorage.setItem(SAVE_KEY, '{ez nem json')
     renderAt(new Date(2026, 11, 10, 9))
-    expect(screen.getByText('0 / 24 ablak nyitva')).toBeInTheDocument()
+    expect(screen.getByText('0 / 24 dísz a fán')).toBeInTheDocument()
     expect(screen.getByText('0 pont')).toBeInTheDocument()
   })
 
@@ -237,7 +237,7 @@ describe('App', () => {
       click(dialog, right(0))
       click(dialog, 'Bezárás')
 
-      expect(screen.getByText('1 / 24 ablak nyitva')).toBeInTheDocument()
+      expect(screen.getByText('1 / 24 dísz a fán')).toBeInTheDocument()
       fireEvent.click(door(2))
       const again = screen.getByRole('dialog')
       expect(within(again).getByText('1 / 3 helyes')).toBeInTheDocument()
@@ -434,15 +434,15 @@ describe('App', () => {
     renderAt(new Date(2026, 11, 10, 9), 'en')
     fireEvent.click(door(1))
     fireEvent.click(door(2))
-    expect(screen.getByText('2 / 24 doors open')).toBeInTheDocument()
+    expect(screen.getByText('2 / 24 ornaments on the tree')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Reset progress' }))
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
-    expect(screen.getByText('2 / 24 doors open')).toBeInTheDocument()
+    expect(screen.getByText('2 / 24 ornaments on the tree')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Reset progress' }))
     fireEvent.click(screen.getByRole('button', { name: 'Yes, reset' }))
-    expect(screen.getByText('0 / 24 doors open')).toBeInTheDocument()
+    expect(screen.getByText('0 / 24 ornaments on the tree')).toBeInTheDocument()
     expect(door(1)).toHaveAttribute('data-status', 'closed')
     expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).lang).toBe('en')
   })

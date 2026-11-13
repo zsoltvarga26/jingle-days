@@ -4,7 +4,7 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
-  padding: 14px 14px 16px;
+  padding: 14px 12px 16px;
   border: 2px solid color-mix(in srgb, var(--pine) 55%, transparent);
   border-radius: var(--radius-board);
   background: var(--card);

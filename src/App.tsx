@@ -119,14 +119,10 @@ function Page() {
             onRevisit={(day) => setActive({ day, entry: 'revisit' })}
           />
           <TreePanel decorating={decorating}>
-            <TreeScene
-              hold={active?.day ?? starting ?? undefined}
-              onShare={() => setSharing(true)}
-              onDecorate={decorate}
-            />
+            <TreeScene hold={active?.day ?? starting ?? undefined} onDecorate={decorate} />
+            <ProgressSummary onShare={() => setSharing(true)} />
           </TreePanel>
         </div>
-        <ProgressSummary onShare={() => setSharing(true)} />
       </main>
       {active && (
         <DayDialog key={active.day} day={active.day} entry={active.entry} onClose={closeDialog} />
