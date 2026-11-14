@@ -1,0 +1,27 @@
+/* A törzs: keskenyen a kalendárium alatt a fa, szélesen egymás mellett. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+
+@media (min-width: 1100px) {
+  .layout {
+    /* A tábla a képernyő magasságához igazodik, hogy a fejléccel együtt görgetés nélkül
+       látsszon: a 7:5-ös rács miatt a szélessége legfeljebb a szabad magasság 1,4-szerese
+       (+ a tábla belső margója). A levont rész a fejléc és a margók összege. */
+    --board-chrome: 150px;
+    --board-max: max(480px, calc((100dvh - var(--board-chrome)) * 1.4 + 32px));
+    grid-template-columns:
+      minmax(0, var(--board-max))
+      minmax(320px, clamp(320px, 26vw, 480px));
+    justify-content: center;
+    gap: 22px;
+    align-items: start;
+  }
+
+  /* A nyitási banner sora is a tábla magasságába számít. */
+  .withBanner {
+    --board-chrome: 192px;
+  }
+}

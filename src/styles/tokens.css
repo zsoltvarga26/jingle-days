@@ -14,6 +14,8 @@
   --gold-dark: #c98e12;
   --green: #2fa374;
   --green-dark: #1b6e4d;
+  --purple: #9b7bd0;
+  --purple-dark: #6c4fa3;
   --snow: #ffffff;
   --snow-dark: #c9dcd4;
   /* Halvány szöveg fehér (snow) felületen; sötét módban sem változik. */
@@ -21,6 +23,8 @@
   --inside: #fff6dc;
   --inside-ink: #b3261e;
   --shadow: rgba(13, 74, 54, 0.22);
+  /* A fa kártyájának áttetsző háttere. */
+  --card: rgba(255, 255, 255, 0.55);
   --flake: #ffffff;
 
   /* A fa és a díszpaletta. Ezek SVG-attribútumként is kikerülnek (a megosztókártya miatt),
@@ -51,6 +55,7 @@
     --inside: #2a1f12;
     --inside-ink: #f5be3a;
     --shadow: rgba(0, 0, 0, 0.45);
+    --card: rgba(255, 255, 255, 0.04);
     --flake: #ddf2ea;
     color-scheme: dark;
   }
@@ -66,6 +71,7 @@
   --inside: #2a1f12;
   --inside-ink: #f5be3a;
   --shadow: rgba(0, 0, 0, 0.45);
+  --card: rgba(255, 255, 255, 0.04);
   --flake: #ddf2ea;
   color-scheme: dark;
 }

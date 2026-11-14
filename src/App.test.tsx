@@ -61,7 +61,7 @@ describe('App', () => {
     const first = renderAt(new Date(2026, 11, 10, 9))
     fireEvent.click(door(3))
     expect(door(3)).toHaveAttribute('data-status', 'open')
-    expect(screen.getByText('1 / 24 ablak nyitva')).toBeInTheDocument()
+    expect(screen.getByText('1 / 24 dísz a fán')).toBeInTheDocument()
     expect(JSON.parse(window.localStorage.getItem(SAVE_KEY)!).days[3].quiz.answers).toHaveLength(3)
 
     first.unmount()
@@ -72,7 +72,7 @@ describe('App', () => {
   test('elrontott mentéssel is betölt, üres előrehaladással', () => {
     window.localStorage.setItem(SAVE_KEY, '{ez nem json')
     renderAt(new Date(2026, 11, 10, 9))
-    expect(screen.getByText('0 / 24 ablak nyitva')).toBeInTheDocument()
+    expect(screen.getByText('0 / 24 dísz a fán')).toBeInTheDocument()
     expect(screen.getByText('0 pont')).toBeInTheDocument()
   })
 
@@ -94,6 +94,31 @@ describe('App', () => {
     expect(document.title).toBe('Advent 2026 – Advent calendar')
     expect(screen.getByRole('button', { name: 'English' })).toHaveAttribute('aria-pressed', 'true')
     expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).lang).toBe('en')
+  })
+
+  test('a témaváltó a gyökérelemre teszi a választott módot, és elmenti', () => {
+    renderAt(new Date(2026, 10, 20, 12))
+    const root = document.documentElement
+    const savedTheme = () => JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).theme
+    // Amíg nincs választás, a rendszer dönt: nincs attribútum.
+    const toggle = screen.getByRole('button', { name: 'Téma: rendszer szerint' })
+    expect(root).not.toHaveAttribute('data-theme')
+
+    fireEvent.click(toggle)
+    expect(toggle).toHaveAccessibleName('Téma: világos')
+    expect(root).toHaveAttribute('data-theme', 'light')
+    expect(savedTheme()).toBe('light')
+
+    fireEvent.click(toggle)
+    expect(toggle).toHaveAccessibleName('Téma: sötét')
+    expect(root).toHaveAttribute('data-theme', 'dark')
+    expect(savedTheme()).toBe('dark')
+
+    // A harmadik kattintás visszaadja a döntést a rendszernek.
+    fireEvent.click(toggle)
+    expect(toggle).toHaveAccessibleName('Téma: rendszer szerint')
+    expect(root).not.toHaveAttribute('data-theme')
+    expect(savedTheme()).toBe('auto')
   })
 
   test('a ?lang= paraméter felülírja a nyelvet, de nem menti el', () => {
@@ -237,7 +262,7 @@ describe('App', () => {
       click(dialog, right(0))
       click(dialog, 'Bezárás')
 
-      expect(screen.getByText('1 / 24 ablak nyitva')).toBeInTheDocument()
+      expect(screen.getByText('1 / 24 dísz a fán')).toBeInTheDocument()
       fireEvent.click(door(2))
       const again = screen.getByRole('dialog')
       expect(within(again).getByText('1 / 3 helyes')).toBeInTheDocument()
@@ -327,6 +352,49 @@ describe('App', () => {
       expect(ornament()).toHaveAttribute('data-state', 'earned')
     })
 
+    test('díszítéskor arany keret kerül a fa kártyájára, és kb. 1,4 s múlva eltűnik', () => {
+      renderAt(new Date(2026, 11, 10, 9))
+      const framed = () => document.querySelector('[data-decorating]')
+      const dialog = openDialog(2)
+      expect(framed()).not.toBeInTheDocument()
+
+      click(dialog, 'Bezárás')
+      expect(framed()).toContainElement(document.querySelector('[data-ornament="d02-bauble-gold"]'))
+      act(() => {
+        vi.advanceTimersByTime(1300)
+      })
+      expect(framed()).toBeInTheDocument()
+      act(() => {
+        vi.advanceTimersByTime(200)
+      })
+      expect(framed()).not.toBeInTheDocument()
+
+      // Újra megnyitva és bezárva nincs új dísz, így keret sincs.
+      fireEvent.click(door(2))
+      click(screen.getByRole('dialog'), 'Bezárom')
+      expect(framed()).not.toBeInTheDocument()
+    })
+
+    test('széles nézetben a dialógus bezárása nem görget, a dísz és a keret azonnal indul', () => {
+      vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('min-width') }))
+      const scrolls = vi.fn()
+      Element.prototype.scrollIntoView = scrolls
+      try {
+        renderAt(new Date(2026, 11, 10, 9))
+        click(openDialog(2), 'Bezárás')
+
+        expect(scrolls).not.toHaveBeenCalled()
+        expect(document.querySelector('[data-ornament="d02-bauble-gold"]')).toHaveAttribute(
+          'data-state',
+          'dropping',
+        )
+        expect(document.querySelector('[data-decorating]')).toBeInTheDocument()
+        expect(door(2)).toHaveFocus()
+      } finally {
+        vi.unstubAllGlobals()
+      }
+    })
+
     test('az elindult díszanimáció akkor is lezárul, ha a fa közben kikerül a képből', () => {
       // Ál-IntersectionObserver: a teszt maga mondja meg, látszik-e a fa.
       let report: (visible: boolean) => void = () => {}
@@ -391,15 +459,15 @@ describe('App', () => {
     renderAt(new Date(2026, 11, 10, 9), 'en')
     fireEvent.click(door(1))
     fireEvent.click(door(2))
-    expect(screen.getByText('2 / 24 doors open')).toBeInTheDocument()
+    expect(screen.getByText('2 / 24 ornaments on the tree')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Reset progress' }))
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
-    expect(screen.getByText('2 / 24 doors open')).toBeInTheDocument()
+    expect(screen.getByText('2 / 24 ornaments on the tree')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Reset progress' }))
     fireEvent.click(screen.getByRole('button', { name: 'Yes, reset' }))
-    expect(screen.getByText('0 / 24 doors open')).toBeInTheDocument()
+    expect(screen.getByText('0 / 24 ornaments on the tree')).toBeInTheDocument()
     expect(door(1)).toHaveAttribute('data-status', 'closed')
     expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).lang).toBe('en')
   })

@@ -6,7 +6,8 @@ import { useProgress } from '../../state/useProgress'
 import styles from './ProgressSummary.module.css'
 
 /**
- * „X / 24 ablak nyitva”, pontszám, megosztás gomb és a visszaállítás megerősítéssel.
+ * A fa alatti statisztikasáv: egy pillben a díszek száma és a pontszám, mellette
+ * a megosztás gomb és a visszaállítás megerősítéssel.
  */
 export function ProgressSummary({ onShare }: { onShare: () => void }) {
   const { t, tn } = useI18n()
@@ -19,15 +20,15 @@ export function ProgressSummary({ onShare }: { onShare: () => void }) {
   return (
     <div className={styles.summary}>
       <p className={styles.progress} aria-live="polite">
-        <span className={styles.pill}>{t('progress.opened', { n: opened })}</span>
-        <span className={styles.pill}>{tn('progress.points', score.points)}</span>
+        <span className={styles.pill}>
+          <span>{t('tree.count', { n: opened })}</span>
+          <span className={styles.points}>{tn('progress.points', score.points)}</span>
+        </span>
       </p>
 
-      <p className={styles.shareRow}>
-        <button type="button" className={`${styles.button} ${styles.share}`} onClick={onShare}>
-          {t('share.open')}
-        </button>
-      </p>
+      <button type="button" className={`${styles.button} ${styles.share}`} onClick={onShare}>
+        {t('share.open')}
+      </button>
 
       {confirming ? (
         <div className={styles.confirm} role="group" aria-label={t('progress.reset.confirm')}>

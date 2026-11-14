@@ -30,9 +30,9 @@ body {
 main {
   position: relative;
   z-index: 1;
-  max-width: 1080px;
+  max-width: 1800px;
   margin: 0 auto;
-  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2.5rem) 3rem;
+  padding: 18px clamp(12px, 3vw, 32px) 28px;
 }
 
 /* Csak képernyőolvasónak szóló szöveg. */

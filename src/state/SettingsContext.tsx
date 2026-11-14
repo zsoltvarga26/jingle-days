@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react'
 import type { Settings } from './settings'
 import { loadSettings, saveSettings, SETTINGS_KEY } from './storage'
 import { SettingsCtx } from './useSettings'
@@ -14,6 +21,14 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       return next
     })
   }, [])
+
+  // A választott mód a gyökérelemre kerül (a tokens.css ezt figyeli); 'auto' esetén
+  // nincs attribútum, és a rendszer beállítása dönt. Még az első kirajzolás előtt fut.
+  useLayoutEffect(() => {
+    const root = document.documentElement
+    if (settings.theme === 'auto') delete root.dataset.theme
+    else root.dataset.theme = settings.theme
+  }, [settings.theme])
 
   useEffect(() => {
     const onStorage = (event: StorageEvent) => {

@@ -41,6 +41,8 @@ export const paletteTokens = {
   redDark: '--red-dark',
   pink: '--pink',
   pinkDark: '--pink-dark',
+  purple: '--purple',
+  purpleDark: '--purple-dark',
   blue: '--orn-blue',
   blueDark: '--orn-blue-dark',
   silver: '--orn-silver',
@@ -68,6 +70,8 @@ export const paletteValues: Record<keyof typeof paletteTokens, string> = {
   redDark: '#a8202f',
   pink: '#ff9fb2',
   pinkDark: '#d9667f',
+  purple: '#9b7bd0',
+  purpleDark: '#6c4fa3',
   blue: '#4a90d9',
   blueDark: '#2f6aa8',
   silver: '#c9d3dc',
@@ -88,7 +92,7 @@ export const treePalette: TreePalette = {
   colors: {
     red: { fill: v.red, shade: v.redDark },
     gold: { fill: v.gold, shade: v.goldDark },
-    green: { fill: v.green, shade: v.greenDark },
+    purple: { fill: v.purple, shade: v.purpleDark },
     blue: { fill: v.blue, shade: v.blueDark },
     pink: { fill: v.pink, shade: v.pinkDark },
     silver: { fill: v.silver, shade: v.silverDark },
@@ -110,6 +114,6 @@ export function monoPalette(color: string): TreePalette {
     goldDark: color,
     gingerbread: color,
     ghostDark: color,
-    colors: { red: pair, gold: pair, green: pair, blue: pair, pink: pair, silver: pair, white: pair },
+    colors: { red: pair, gold: pair, purple: pair, blue: pair, pink: pair, silver: pair, white: pair },
   }
 }

@@ -7,10 +7,14 @@ export const hu = {
 
   'header.title': 'Advent 2026',
   'header.lead': 'Minden nap egy új ablak. Kattints rá, és nézd meg, mi lapul mögötte!',
+  'header.taglineShort': 'Minden nap egy új ablak – nyisd ki a mait!',
 
   'lang.switch': 'Nyelv',
   'lang.hu': 'Magyar',
   'lang.en': 'Angol',
+  'theme.auto': 'Téma: rendszer szerint',
+  'theme.light': 'Téma: világos',
+  'theme.dark': 'Téma: sötét',
 
   'sound.group': 'Hang',
   'sound.sfx': 'Hangeffektek',

@@ -1,0 +1,29 @@
+/* Ugyanaz a kerek kapcsoló, mint a hangkapcsolók. */
+.toggle {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 2px solid var(--pine);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.toggle[data-chosen] {
+  background: var(--pine);
+  color: var(--snow);
+}
+
+@media (hover: hover) {
+  .toggle:not([data-chosen]):hover {
+    background: var(--bg-2);
+  }
+}
+
+.toggle:focus-visible {
+  outline: 4px solid var(--gold);
+  outline-offset: 3px;
+}

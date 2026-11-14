@@ -4,7 +4,16 @@ import { getDay } from '../../content/days'
 import type { DoorLayout } from '../../content/layout'
 import { Door, type DoorProps } from './Door'
 
-const layout: DoorLayout = { day: 5, size: 'normal', color: 'gold', pattern: 'stripes', ribbon: false }
+const cell = { row: 1, col: 1, rows: 1, cols: 1 }
+const layout: DoorLayout = {
+  day: 5,
+  size: 'normal',
+  color: 'gold',
+  pattern: 'stripes',
+  ribbon: false,
+  areaWide: cell,
+  areaNarrow: cell,
+}
 
 function setup(props: Partial<DoorProps> = {}) {
   const handlers = { onOpen: vi.fn(), onRevisit: vi.fn(), onLockedClick: vi.fn() }

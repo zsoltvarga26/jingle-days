@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import type { DoorLayout } from '../../content/layout'
+import { gridArea, type DoorLayout } from '../../content/layout'
 import type { Ornament } from '../../content/types'
 import { OrnamentIcon } from '../TreeScene/ornaments/OrnamentArt'
 import { monoPalette } from '../TreeScene/palette'
@@ -46,7 +46,7 @@ export function Door({
   onRevisit,
   onLockedClick,
 }: DoorProps) {
-  const { day, size, color, pattern, ribbon } = layout
+  const { day, size, color, pattern, ribbon, areaWide, areaNarrow } = layout
 
   // A betöltéskor már nyitott ajtó animáció nélkül áll nyitva; ha később bezárul
   // (visszaállítás), a következő nyitás már animálva történik.
@@ -78,7 +78,7 @@ export function Door({
 
   const className = [
     styles.day,
-    styles[size],
+    size === 'big' ? styles.big : '',
     styles[status],
     instant ? styles.instant : '',
     showBubble ? styles.raised : '',
@@ -90,7 +90,14 @@ export function Door({
     <button
       type="button"
       className={className}
-      style={{ '--i': index } as CSSProperties}
+      style={
+        {
+          '--i': index,
+          // A rácsbeli hely; a médialekérdezés választ a kettő közül (Door.module.css).
+          '--area-wide': gridArea(areaWide),
+          '--area-narrow': gridArea(areaNarrow),
+        } as CSSProperties
+      }
       aria-label={ariaLabel}
       // Nem `disabled`: a zárolt ajtó fókuszálható marad, és Enterre is kiírja, mikor nyílik.
       aria-disabled={status === 'locked' ? true : undefined}

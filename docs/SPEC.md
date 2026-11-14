@@ -153,7 +153,7 @@ export interface Quote {
 export type OrnamentShape =
   | 'bauble' | 'candyCane' | 'bell' | 'bow' | 'star' | 'snowflake'
   | 'gingerbread' | 'boot' | 'gift' | 'candle' | 'szaloncukor' | 'pinecone';
-export type OrnamentColor = 'red' | 'gold' | 'green' | 'blue' | 'pink' | 'silver' | 'white';
+export type OrnamentColor = 'red' | 'gold' | 'purple' | 'blue' | 'pink' | 'silver' | 'white';
 
 export interface Ornament {
   id: string;              // egyedi azonosító, pl. 'd01-bauble-red'
@@ -386,7 +386,7 @@ Az ötlet jól megvalósítható, külön könyvtár nélkül: a javaslat egyetl
 
 - A `TreeScene` egy `viewBox="0 0 100 120"` SVG. A díszek pozíciója a tartalomfájl `ornament.slot` mezőjéből jön, közvetlenül a rajz egységeiben (`x` 0–100, `y` 0–120), így átrendezéshez nem kell kódhoz nyúlni, és a fa alatti ajándékok (`y` > 100) is elférnek.
 - Minden dísz egy kis React SVG-komponens (`<Bauble color="red" />`, `<CandyCane />`, `<Star />` stb.), amelyet a tartalomfájl `shape` mezője választ ki. Egy alakzat több színnel is felhasználható: 12 rajz adja ki a 24 díszt. Emojit nem javaslok, mert operációs rendszerenként máshogy néz ki.
-- A díszek színe a `color` mezőből jön, egy hétszínű díszpalettáról (piros, arany, zöld, kék, rózsaszín, ezüst, fehér). A paletta a `tokens.css`-ben és a `TreeScene` `palette` propjában él; a színek SVG-attribútumként kerülnek ki, hogy a megosztókártya is ki tudja rajzolni a fát.
+- A díszek színe a `color` mezőből jön, egy hétszínű díszpalettáról (piros, arany, lila, kék, rózsaszín, ezüst, fehér; zöld nincs, mert a zöld fán nem látszana jól). A paletta a `tokens.css`-ben és a `TreeScene` `palette` propjában él; a színek SVG-attribútumként kerülnek ki, hogy a megosztókártya is ki tudja rajzolni a fát.
 - **Nem megszerzett** dísz: azonos alak, `fill: none`, szaggatott körvonal, 30% átlátszóság. **Megszerzett:** teli szín és enyhe, folyamatos lengetés.
 - **A megszerzés pillanata:** a dialógus utolsó lépése megmutatja az új díszt. Bezáráskor az oldal simán a fához görget, a dísz felülről a helyére esik egy kis ráugrással, és néhány csillogás jelzi.
 - A fa alatt a számláló: „7 / 24 dísz a fán”. A 24. dísz után a fa fényei felgyulladnak, és megjelenik egy ünnepi záróüzenet.
@@ -400,8 +400,8 @@ Az ötlet jól megvalósítható, külön könyvtár nélkül: a javaslat egyetl
 | 3 | Piros cukorpálca | `candyCane` | 15 | Ezüst csengő | `bell` |
 | 4 | Mézeskalács-figura | `gingerbread` | 16 | Arany szaloncukor | `szaloncukor` |
 | 5 | Arany csengő | `bell` | 17 | Rózsaszín gömb | `bauble` |
-| 6 | Mikuláscsizma | `boot` | 18 | Zöld cukorpálca | `candyCane` |
-| 7 | Zöld gömb | `bauble` | 19 | Arany masni | `bow` |
+| 6 | Mikuláscsizma | `boot` | 18 | Kék cukorpálca | `candyCane` |
+| 7 | Lila gömb | `bauble` | 19 | Arany masni | `bow` |
 | 8 | Fehér hópehely | `snowflake` | 20 | Arany kiscsillag | `star` |
 | 9 | Fenyőtoboz | `pinecone` | 21 | Ezüst gömb | `bauble` |
 | 10 | Kék gömb | `bauble` | 22 | Gyertya | `candle` |
