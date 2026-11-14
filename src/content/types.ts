@@ -56,7 +56,8 @@ export type OrnamentShape =
   | 'szaloncukor'
   | 'pinecone'
 
-export type OrnamentColor = 'red' | 'gold' | 'green' | 'blue' | 'pink' | 'silver' | 'white'
+/** Zöld nincs köztük: a zöld fán nem látszana jól. */
+export type OrnamentColor = 'red' | 'gold' | 'purple' | 'blue' | 'pink' | 'silver' | 'white'
 
 export interface Ornament {
   /** Egyedi azonosító, pl. 'd01-bauble-red'. */
