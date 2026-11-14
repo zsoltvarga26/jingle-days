@@ -1,18 +1,19 @@
-import { useSyncExternalStore } from 'react'
+import type { ReactElement } from 'react'
 import { useI18n } from '../../i18n/useI18n'
+import type { Theme } from '../../state/settings'
 import { useSettings } from '../../state/useSettings'
 import styles from './ThemeSwitch.module.css'
 
-const DARK_QUERY = '(prefers-color-scheme: dark)'
+/** A gomb ebben a sorrendben lépked a módok között. */
+const NEXT: Record<Theme, Theme> = { auto: 'light', light: 'dark', dark: 'auto' }
 
-function subscribeSystemDark(onChange: () => void) {
-  const query = window.matchMedia?.(DARK_QUERY)
-  query?.addEventListener?.('change', onChange)
-  return () => query?.removeEventListener?.('change', onChange)
-}
-
-function systemDark(): boolean {
-  return window.matchMedia?.(DARK_QUERY).matches ?? false
+function AutoIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" strokeWidth="2.2" />
+      <path d="M12 3.6a8.4 8.4 0 0 1 0 16.8Z" fill="currentColor" />
+    </svg>
+  )
 }
 
 function SunIcon() {
@@ -37,26 +38,30 @@ function MoonIcon() {
   )
 }
 
+const ICONS: Record<Theme, () => ReactElement> = { auto: AutoIcon, light: SunIcon, dark: MoonIcon }
+
 /**
- * Világos / sötét mód kapcsoló. Amíg a játékos nem választ, a rendszer beállítása érvényes;
- * az első kattintás az éppen látszó mód ellentétére vált, és a választás mentődik.
+ * Témaváltó: egy gomb, amely a rendszer szerinti, a világos és a sötét mód között lépked.
+ * Az ikon és a gomb neve az éppen érvényes beállítást mutatja; a választás mentődik.
  */
 export function ThemeSwitch() {
   const { t } = useI18n()
   const { settings, updateSettings } = useSettings()
-  const prefersDark = useSyncExternalStore(subscribeSystemDark, systemDark)
-  const dark = settings.theme === 'dark' || (settings.theme === 'auto' && prefersDark)
+  const { theme } = settings
+  const Icon = ICONS[theme]
+  const label = t(`theme.${theme}`)
 
   return (
     <button
       type="button"
       className={styles.toggle}
-      aria-pressed={dark}
-      aria-label={t('theme.dark')}
-      title={t('theme.dark')}
-      onClick={() => updateSettings({ theme: dark ? 'light' : 'dark' })}
+      // Kitöltve, ha a játékos maga választott módot; körvonalas, ha a rendszer dönt.
+      data-chosen={theme === 'auto' ? undefined : ''}
+      aria-label={label}
+      title={label}
+      onClick={() => updateSettings({ theme: NEXT[theme] })}
     >
-      {dark ? <MoonIcon /> : <SunIcon />}
+      <Icon />
     </button>
   )
 }

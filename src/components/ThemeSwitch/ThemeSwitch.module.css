@@ -12,13 +12,13 @@
   cursor: pointer;
 }
 
-.toggle[aria-pressed='true'] {
+.toggle[data-chosen] {
   background: var(--pine);
   color: var(--snow);
 }
 
 @media (hover: hover) {
-  .toggle[aria-pressed='false']:hover {
+  .toggle:not([data-chosen]):hover {
     background: var(--bg-2);
   }
 }

@@ -12,7 +12,9 @@ export const hu = {
   'lang.switch': 'Nyelv',
   'lang.hu': 'Magyar',
   'lang.en': 'Angol',
-  'theme.dark': 'Sötét mód',
+  'theme.auto': 'Téma: rendszer szerint',
+  'theme.light': 'Téma: világos',
+  'theme.dark': 'Téma: sötét',
 
   'sound.group': 'Hang',
   'sound.sfx': 'Hangeffektek',

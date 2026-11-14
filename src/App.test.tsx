@@ -99,19 +99,26 @@ describe('App', () => {
   test('a témaváltó a gyökérelemre teszi a választott módot, és elmenti', () => {
     renderAt(new Date(2026, 10, 20, 12))
     const root = document.documentElement
-    const toggle = screen.getByRole('button', { name: 'Sötét mód' })
+    const savedTheme = () => JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).theme
     // Amíg nincs választás, a rendszer dönt: nincs attribútum.
+    const toggle = screen.getByRole('button', { name: 'Téma: rendszer szerint' })
     expect(root).not.toHaveAttribute('data-theme')
-    expect(toggle).toHaveAttribute('aria-pressed', 'false')
 
     fireEvent.click(toggle)
-    expect(root).toHaveAttribute('data-theme', 'dark')
-    expect(toggle).toHaveAttribute('aria-pressed', 'true')
-    expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).theme).toBe('dark')
-
-    fireEvent.click(toggle)
+    expect(toggle).toHaveAccessibleName('Téma: világos')
     expect(root).toHaveAttribute('data-theme', 'light')
-    expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).theme).toBe('light')
+    expect(savedTheme()).toBe('light')
+
+    fireEvent.click(toggle)
+    expect(toggle).toHaveAccessibleName('Téma: sötét')
+    expect(root).toHaveAttribute('data-theme', 'dark')
+    expect(savedTheme()).toBe('dark')
+
+    // A harmadik kattintás visszaadja a döntést a rendszernek.
+    fireEvent.click(toggle)
+    expect(toggle).toHaveAccessibleName('Téma: rendszer szerint')
+    expect(root).not.toHaveAttribute('data-theme')
+    expect(savedTheme()).toBe('auto')
   })
 
   test('a ?lang= paraméter felülírja a nyelvet, de nem menti el', () => {

@@ -11,7 +11,9 @@ export const en: Record<MessageKey, string> = {
   'lang.switch': 'Language',
   'lang.hu': 'Hungarian',
   'lang.en': 'English',
-  'theme.dark': 'Dark mode',
+  'theme.auto': 'Theme: system',
+  'theme.light': 'Theme: light',
+  'theme.dark': 'Theme: dark',
 
   'sound.group': 'Sound',
   'sound.sfx': 'Sound effects',
