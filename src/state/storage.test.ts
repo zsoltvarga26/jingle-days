@@ -88,7 +88,12 @@ describe('mentés', () => {
 
 describe('beállítások', () => {
   test('alapértékek: effektek be, zene ki, 0,3 hangerő', () => {
-    expect(loadSettings()).toMatchObject({ sfx: true, music: false, musicVolume: 0.3 })
+    expect(loadSettings()).toMatchObject({
+      theme: 'auto',
+      sfx: true,
+      music: false,
+      musicVolume: 0.3,
+    })
   })
 
   test('a kezdő nyelv a böngésző nyelvéből jön', () => {
@@ -99,24 +104,45 @@ describe('beállítások', () => {
   })
 
   test('a mentett beállítás visszatöltődik', () => {
-    saveSettings({ lang: 'en', sfx: false, music: true, musicVolume: 0.8 })
-    expect(loadSettings()).toEqual({ lang: 'en', sfx: false, music: true, musicVolume: 0.8 })
+    const saved = { lang: 'en', theme: 'dark', sfx: false, music: true, musicVolume: 0.8 } as const
+    saveSettings(saved)
+    expect(loadSettings()).toEqual(saved)
   })
 
   test('a hibás mezők alapértéket kapnak, a jók megmaradnak', () => {
     vi.spyOn(window.navigator, 'language', 'get').mockReturnValue('hu')
     window.localStorage.setItem(
       SETTINGS_KEY,
-      JSON.stringify({ lang: 'fr', sfx: 'igen', music: true, musicVolume: 7 }),
+      JSON.stringify({ lang: 'fr', theme: 'lila', sfx: 'igen', music: true, musicVolume: 7 }),
     )
-    expect(loadSettings()).toEqual({ lang: 'hu', sfx: true, music: true, musicVolume: 1 })
+    expect(loadSettings()).toEqual({
+      lang: 'hu',
+      theme: 'auto',
+      sfx: true,
+      music: true,
+      musicVolume: 1,
+    })
 
     window.localStorage.setItem(SETTINGS_KEY, 'nem json')
     expect(loadSettings().lang).toBe('hu')
   })
 
+  test('a téma nélküli régi beállítás betölt, a téma a rendszert követi', () => {
+    window.localStorage.setItem(
+      SETTINGS_KEY,
+      JSON.stringify({ lang: 'en', sfx: false, music: true, musicVolume: 0.5 }),
+    )
+    expect(loadSettings()).toEqual({
+      lang: 'en',
+      theme: 'auto',
+      sfx: false,
+      music: true,
+      musicVolume: 0.5,
+    })
+  })
+
   test('az előrehaladás és a beállítások külön kulcson élnek', () => {
-    saveSettings({ lang: 'en', sfx: false, music: false, musicVolume: 0.3 })
+    saveSettings({ lang: 'en', theme: 'auto', sfx: false, music: false, musicVolume: 0.3 })
     saveSave(sampleSave())
     window.localStorage.removeItem(SAVE_KEY)
     expect(loadSettings().lang).toBe('en')

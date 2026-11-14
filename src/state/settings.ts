@@ -1,8 +1,17 @@
 import { isLang, type Lang } from '../content/types'
 
+/** Megjelenés: 'auto' a rendszer beállítását követi, amíg a játékos nem választ. */
+export type Theme = 'auto' | 'light' | 'dark'
+
+export function isTheme(value: unknown): value is Theme {
+  return value === 'auto' || value === 'light' || value === 'dark'
+}
+
 /** Külön kulcson él, hogy az előrehaladás törlése ne állítsa vissza. */
 export interface Settings {
   lang: Lang
+  /** Világos vagy sötét mód; régebbi mentésből hiányzik, ilyenkor 'auto'. */
+  theme: Theme
   /** Hangeffektek. */
   sfx: boolean
   /** Háttérzene. */
@@ -19,6 +28,7 @@ export function detectLang(navigatorLanguage: string | undefined): Lang {
 export function defaultSettings(navigatorLanguage?: string): Settings {
   return {
     lang: detectLang(navigatorLanguage),
+    theme: 'auto',
     sfx: true,
     music: false,
     musicVolume: 0.3,
@@ -32,6 +42,7 @@ export function sanitizeSettings(raw: unknown, defaults: Settings): Settings {
   const volume = data.musicVolume
   return {
     lang: isLang(data.lang) ? data.lang : defaults.lang,
+    theme: isTheme(data.theme) ? data.theme : defaults.theme,
     sfx: typeof data.sfx === 'boolean' ? data.sfx : defaults.sfx,
     music: typeof data.music === 'boolean' ? data.music : defaults.music,
     musicVolume:

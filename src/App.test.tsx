@@ -96,6 +96,24 @@ describe('App', () => {
     expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).lang).toBe('en')
   })
 
+  test('a témaváltó a gyökérelemre teszi a választott módot, és elmenti', () => {
+    renderAt(new Date(2026, 10, 20, 12))
+    const root = document.documentElement
+    const toggle = screen.getByRole('button', { name: 'Sötét mód' })
+    // Amíg nincs választás, a rendszer dönt: nincs attribútum.
+    expect(root).not.toHaveAttribute('data-theme')
+    expect(toggle).toHaveAttribute('aria-pressed', 'false')
+
+    fireEvent.click(toggle)
+    expect(root).toHaveAttribute('data-theme', 'dark')
+    expect(toggle).toHaveAttribute('aria-pressed', 'true')
+    expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).theme).toBe('dark')
+
+    fireEvent.click(toggle)
+    expect(root).toHaveAttribute('data-theme', 'light')
+    expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).theme).toBe('light')
+  })
+
   test('a ?lang= paraméter felülírja a nyelvet, de nem menti el', () => {
     window.history.replaceState(null, '', '/?lang=en')
     renderAt(new Date(2026, 10, 20, 12), 'hu')

@@ -65,10 +65,17 @@
   gap: 0.5rem 0.9rem;
 }
 
+/* A nyelvváltó és a témaváltó összetartozik, sortöréskor is együtt marad. */
+.pair {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 /* Elég széles kijelző: mindig egy sor. Ha szűk a hely (pl. látszik a hangerőcsúszka),
    a bevezető mondat törik két sorba a cím mellett, a többi elem nem csúszik új sorba.
    Ez alatt a fejléc magától tördel (flex-wrap). */
-@media (min-width: 1280px) {
+@media (min-width: 1340px) {
   .header,
   .brand,
   .tools {

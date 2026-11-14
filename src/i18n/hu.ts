@@ -12,6 +12,7 @@ export const hu = {
   'lang.switch': 'Nyelv',
   'lang.hu': 'Magyar',
   'lang.en': 'Angol',
+  'theme.dark': 'Sötét mód',
 
   'sound.group': 'Hang',
   'sound.sfx': 'Hangeffektek',

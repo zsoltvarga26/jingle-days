@@ -2,11 +2,12 @@ import type { ReactNode } from 'react'
 import { useI18n } from '../../i18n/useI18n'
 import { LanguageSwitch } from '../LanguageSwitch/LanguageSwitch'
 import { SoundControls } from '../SoundControls/SoundControls'
+import { ThemeSwitch } from '../ThemeSwitch/ThemeSwitch'
 import styles from './Header.module.css'
 
 /**
  * Egysoros fejléc: balra a cím és a bevezető mondat, jobbra a gyerekek (visszaszámláló),
- * majd a hangkapcsolók és a nyelvváltó. Keskeny kijelzőn középre igazítva törik több sorba.
+ * majd a hangkapcsolók, a nyelvváltó és a témaváltó. Keskeny kijelzőn középre igazítva törik több sorba.
  */
 export function Header({ children }: { children?: ReactNode }) {
   const { t } = useI18n()
@@ -20,7 +21,10 @@ export function Header({ children }: { children?: ReactNode }) {
       {children && <div className={styles.extra}>{children}</div>}
       <div className={styles.tools}>
         <SoundControls />
-        <LanguageSwitch />
+        <div className={styles.pair}>
+          <LanguageSwitch />
+          <ThemeSwitch />
+        </div>
       </div>
     </header>
   )
