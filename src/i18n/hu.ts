@@ -99,8 +99,8 @@ export const hu = {
   'tree.label': 'Karácsonyfa, {n} dísszel a 24-ből',
   'tree.count': '{n} / 24 dísz a fán',
   'tree.complete': 'Elkészült a fa! Boldog karácsonyt!',
-  'cat.pet': 'Megsimogatom Lumit, az alvó cicát',
-  'cat.purring': 'Prrr… Lumi dorombol',
+  'cat.pet': 'Megsimogatom Lajost, az alvó cicát',
+  'cat.purring': 'Prrr… Lajos dorombol',
 
   'share.open': 'Megosztom',
   'share.title': 'Az eredményem',
