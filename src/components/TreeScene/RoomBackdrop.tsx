@@ -13,7 +13,7 @@ const BRICK_ROWS: readonly [y: number, shift: number][] = [
   [94, 3],
 ]
 
-/** Lumi tálkájának teste (a perem fölötte külön ellipszis). */
+/** Lajos tálkájának teste (a perem fölötte külön ellipszis). */
 const BOWL_BODY = 'M20 114.8 H33 L31.9 118.7 Q31.75 119.3 31.1 119.3 H21.9 Q21.25 119.3 21.1 118.7 Z'
 
 const FLAKES: readonly [x: number, y: number][] = [
@@ -232,7 +232,7 @@ export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalett
       {/* Elöl a két fehér mancs. */}
       <ellipse fill={p.snow} cx={10} cy={112.3} rx={1.9} ry={1} />
       <ellipse fill={p.snow} cx={13.8} cy={112.4} rx={1.9} ry={1} />
-      {/* Lumi tálkája a szőnyeg szélén, elöl a nevével. A betűk vonalak, nem szöveg, hogy a
+      {/* Lajos tálkája a szőnyeg szélén, elöl a nevével. A betűk vonalak, nem szöveg, hogy a
           megosztókártya képén is betűtípus nélkül megjelenjenek. */}
       <g data-bowl="">
         <path fill={p.bowl} d={BOWL_BODY} />
@@ -244,14 +244,14 @@ export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalett
           <circle cx={28.2} cy={114.35} r={0.45} />
         </g>
         <path
-          d="M22.6 115.8 V118.4 H24.1 M24.9 116.9 V117.8 Q24.9 118.45 25.6 118.45 Q26.3 118.45 26.3 117.8 V116.9 M26.3 117.8 V118.4 M27.1 118.4 V116.9 M27.1 117.5 Q27.1 116.9 27.7 116.9 Q28.3 116.9 28.3 117.5 V118.4 M28.3 117.5 Q28.3 116.9 28.9 116.9 Q29.5 116.9 29.5 117.5 V118.4 M30.3 116.9 V118.4"
+          d="M22.25 115.8 V118.4 H23.55 M25.55 116.9 V118.4 M25.55 117.65 Q25.55 116.9 24.9 116.9 Q24.25 116.9 24.25 117.65 Q24.25 118.4 24.9 118.4 Q25.55 118.4 25.55 117.65 M26.85 116.9 V118.55 Q26.85 118.95 26.35 118.95 M28.2 116.9 Q28.85 116.9 28.85 117.65 Q28.85 118.4 28.2 118.4 Q27.55 118.4 27.55 117.65 Q27.55 116.9 28.2 116.9 Z M30.6 117.15 Q30.35 116.9 30.05 116.9 Q29.55 116.9 29.55 117.3 Q29.55 117.65 30.1 117.65 Q30.65 117.65 30.65 118 Q30.65 118.4 30.15 118.4 Q29.8 118.4 29.55 118.15"
           fill="none"
           stroke={p.bowlText}
           strokeWidth={0.42}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <circle fill={p.bowlText} cx={30.3} cy={116.15} r={0.26} />
+        <circle fill={p.bowlText} cx={26.85} cy={116.15} r={0.26} />
       </g>
       {/* Halkan szálló „z” – csak alvás közben, az oldalon, mozgással látszik. */}
       {!awake && (
