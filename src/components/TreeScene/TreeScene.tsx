@@ -5,7 +5,8 @@ import { useI18n } from '../../i18n/useI18n'
 import { useProgress } from '../../state/useProgress'
 import { ROOM_VIEWBOX, TREE_ID } from './geometry'
 import { roomPalette, treePalette } from './palette'
-import { RoomBackground, SleepingCat } from './RoomBackdrop'
+import { PettableCat } from './PettableCat'
+import { RoomBackground } from './RoomBackdrop'
 import { Tree } from './Tree'
 import styles from './TreeScene.module.css'
 
@@ -146,9 +147,7 @@ export function TreeScene({ hold, onDecorate }: TreeSceneProps) {
             palette={treePalette}
             label={t('tree.label', { n: count })}
           />
-          <svg className={styles.cat} viewBox={ROOM_BOX} aria-hidden="true" focusable="false">
-            <SleepingCat palette={roomPalette} />
-          </svg>
+          <PettableCat />
         </div>
       </div>
       {complete && <p className={styles.complete}>{t('tree.complete')}</p>}

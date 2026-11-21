@@ -189,6 +189,16 @@ describe('ütemezés (ál-AudioContexttel)', () => {
     expect(Math.max(...started)).toBeGreaterThan(Math.min(...started))
   })
 
+  test('a dorombolás zajt és lüktető mély hangot indít, és a megadott ideig tart', async () => {
+    const { playSfx, PURR_SECONDS } = await import('./sfx')
+    playSfx('purr')
+    expect(noiseStarted).toBe(1)
+    // A mély alaphang és a pergést adó lüktetés.
+    expect(started).toHaveLength(2)
+    expect(PURR_SECONDS).toBeGreaterThan(1.5)
+    expect(PURR_SECONDS).toBeLessThan(4)
+  })
+
   test('a dallamváltó a következő dallam elejére ugrik, körbe, és értesíti a figyelőket', async () => {
     const { startMusic, stopMusic, nextMelody, getMelodyId, subscribeMelody } = await import('./music')
     const seen: string[] = []

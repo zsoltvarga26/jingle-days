@@ -161,10 +161,11 @@ export function RoomBackground({ palette: p }: { palette: RoomPalette }) {
 /**
  * Alvó fekete-fehér cica a szőnyegen, a feje a mancsain. A fa előtti rétegben van, hogy a
  * farka a fa alatti fehér takarón feküdjön, ne alatta. Szuszog, és néha megrebbenti a farkát.
+ * Ha `awake`, kinyitja a szemét (megsimogatták, dorombol).
  */
-export function SleepingCat({ palette: p }: { palette: RoomPalette }) {
+export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalette; awake?: boolean }) {
   return (
-    <g>
+    <g data-cat={awake ? 'awake' : 'asleep'}>
       <g className={styles.tail}>
         <path
           d="M28.5 107.8 C34 107.5 37.5 109.6 35.6 112.2 C34.5 113.6 31.8 113.4 31.2 112.2"
@@ -190,13 +191,24 @@ export function SleepingCat({ palette: p }: { palette: RoomPalette }) {
         fill={p.snow}
         d="M12 106.6 C10.4 106.6 9 108.4 8.7 109.6 C8.6 111 10.2 111.7 12 111.7 C13.8 111.7 15.4 111 15.3 109.6 C15 108.4 13.6 106.6 12 106.6 Z"
       />
-      <path
-        d="M9.3 106.9 Q10.2 107.7 11.1 106.9 M12.9 106.9 Q13.8 107.7 14.7 106.9"
-        fill="none"
-        stroke={p.eye}
-        strokeWidth={0.4}
-        strokeLinecap="round"
-      />
+      {awake ? (
+        // Nyitott szem: arany írisz, keskeny pupilla, apró csillanás.
+        [10.2, 13.8].map((cx) => (
+          <g key={cx}>
+            <ellipse fill={p.gold} cx={cx} cy={107.1} rx={0.9} ry={0.8} />
+            <ellipse fill={p.soot} cx={cx} cy={107.1} rx={0.26} ry={0.68} />
+            <circle fill={p.snow} cx={cx + 0.3} cy={106.8} r={0.18} />
+          </g>
+        ))
+      ) : (
+        <path
+          d="M9.3 106.9 Q10.2 107.7 11.1 106.9 M12.9 106.9 Q13.8 107.7 14.7 106.9"
+          fill="none"
+          stroke={p.eye}
+          strokeWidth={0.4}
+          strokeLinecap="round"
+        />
+      )}
       <path fill={p.nose} d="M11.4 108.4 H12.6 L12 109.1 Z" />
       {/* Apró, „w” alakú száj az orr alatt. */}
       <path
@@ -217,17 +229,19 @@ export function SleepingCat({ palette: p }: { palette: RoomPalette }) {
       {/* Elöl a két fehér mancs. */}
       <ellipse fill={p.snow} cx={10} cy={112.3} rx={1.9} ry={1} />
       <ellipse fill={p.snow} cx={13.8} cy={112.4} rx={1.9} ry={1} />
-      {/* Halkan szálló „z” – csak az oldalon, mozgással látszik. */}
-      <path
-        className={styles.zzz}
-        d="M5 99 H7.4 L5 101.4 H7.4"
-        fill="none"
-        stroke={p.zzz}
-        strokeWidth={0.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity={0}
-      />
+      {/* Halkan szálló „z” – csak alvás közben, az oldalon, mozgással látszik. */}
+      {!awake && (
+        <path
+          className={styles.zzz}
+          d="M5 99 H7.4 L5 101.4 H7.4"
+          fill="none"
+          stroke={p.zzz}
+          strokeWidth={0.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity={0}
+        />
+      )}
     </g>
   )
 }

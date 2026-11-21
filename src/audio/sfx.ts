@@ -16,6 +16,11 @@ export type SfxName =
   | 'solved'
   /** Dísz a fán: csillogó, magas csengőfüzér. */
   | 'sparkle'
+  /** A megsimogatott cica dorombolása: mély, lüktető zönge két „lélegzetvétellel”. */
+  | 'purr'
+
+/** A dorombolás hossza másodpercben; a cica addig tartja nyitva a szemét. */
+export const PURR_SECONDS = 2.6
 
 /**
  * Csengőhang additív szintézissel: néhány szinuszoszcillátor a harangokra jellemző,
@@ -186,6 +191,73 @@ function tick(engine: Engine, start: number) {
   osc.stop(start + 0.1)
 }
 
+/**
+ * Dorombolás: mélyre szűrt zaj és egy halk, mély alaphang, amelyet egy kb. 25 Hz-es
+ * lüktetés (a dorombolás „pergése”) moduláció. A burkoló két lélegzetvételt rajzol:
+ * kifújáskor erősebb, belégzéskor halkabb és kicsit magasabb.
+ */
+function purr(engine: Engine, start: number) {
+  const { ctx, sfx } = engine
+  const end = start + PURR_SECONDS
+
+  const source = ctx.createBufferSource()
+  source.buffer = noiseBuffer(ctx)
+  source.loop = true
+  const filter = ctx.createBiquadFilter()
+  filter.type = 'lowpass'
+  filter.frequency.value = 320
+  filter.Q.value = 0.8
+
+  const body = ctx.createOscillator()
+  body.type = 'triangle'
+  body.frequency.value = 52
+  const bodyLevel = ctx.createGain()
+  bodyLevel.gain.value = 0.35
+
+  // A pergés: a hangerő 25-ször lüktet másodpercenként.
+  const flutter = ctx.createGain()
+  flutter.gain.value = 0.55
+  const lfo = ctx.createOscillator()
+  lfo.type = 'sine'
+  lfo.frequency.value = 25
+  const depth = ctx.createGain()
+  depth.gain.value = 0.45
+  lfo.connect(depth)
+  depth.connect(flutter.gain)
+
+  // Két lélegzet: ki (erősebb) – be (halkabb) – ki – be.
+  const envelope = ctx.createGain()
+  const breaths: [at: number, level: number][] = [
+    [0, 0.0001],
+    [0.12, 0.5],
+    [0.7, 0.42],
+    [0.85, 0.12],
+    [1.05, 0.28],
+    [1.3, 0.1],
+    [1.42, 0.5],
+    [2.0, 0.4],
+    [2.15, 0.1],
+    [2.35, 0.2],
+    [PURR_SECONDS, 0.0001],
+  ]
+  for (const [at, level] of breaths) {
+    if (at === 0) envelope.gain.setValueAtTime(level, start)
+    else envelope.gain.exponentialRampToValueAtTime(level, start + at)
+  }
+
+  source.connect(filter)
+  filter.connect(flutter)
+  body.connect(bodyLevel)
+  bodyLevel.connect(flutter)
+  flutter.connect(envelope)
+  envelope.connect(sfx)
+
+  for (const node of [source, body, lfo]) {
+    node.start(start)
+    node.stop(end + 0.05)
+  }
+}
+
 // Hangmagasságok (Hz).
 const G5 = 783.99
 const C6 = 1046.5
@@ -214,6 +286,7 @@ const recipes: Record<SfxName, (engine: Engine, now: number) => void> = {
       bell(engine, frequency, now + index * 0.07, 0.9, 0.09),
     )
   },
+  purr: (engine, now) => purr(engine, now),
 }
 
 /**
