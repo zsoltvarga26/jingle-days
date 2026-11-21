@@ -7,7 +7,7 @@ import {
   displayUrl,
   drawCard,
   pageUrl,
-  treeSvgMarkup,
+  sceneSvgMarkup,
   type CardText,
 } from './shareCard'
 
@@ -27,12 +27,14 @@ describe('az oldal címe', () => {
   })
 })
 
-describe('a fa képe a kártyához', () => {
+describe('a jelenet képe a kártyához', () => {
   test('önálló SVG saját mérettel, a megnyitott napok díszeivel', async () => {
     const earned = new Set([ornaments[0].id, ornaments[4].id])
-    const svg = await treeSvgMarkup(ornaments, earned, 1000)
+    const svg = await sceneSvgMarkup(ornaments, earned, 1300)
 
-    expect(svg.startsWith('<svg width="1000" height="1200" ')).toBe(true)
+    expect(svg.startsWith('<svg width="1300" height="1200" ')).toBe(true)
+    // A fa a szobában, a jobb oldalon áll.
+    expect(svg).toContain('<svg x="30" y="0" width="100" height="120" ')
     expect(svg).toContain('xmlns="http://www.w3.org/2000/svg"')
     expect(svg.match(/data-state="earned"/g)).toHaveLength(2)
     expect(svg.match(/data-state="ghost"/g)).toHaveLength(22)
@@ -41,7 +43,7 @@ describe('a fa képe a kártyához', () => {
 
   test('CSS nélkül is színes: nincs benne változó, szöveg vagy foreignObject', async () => {
     const all = new Set(ornaments.map((o) => o.id))
-    const svg = await treeSvgMarkup(ornaments, all, 600)
+    const svg = await sceneSvgMarkup(ornaments, all, 650)
 
     expect(svg).not.toContain('var(--')
     expect(svg).not.toContain('currentColor')
@@ -66,7 +68,7 @@ describe('a kártya rajza', () => {
     url: 'advent.example',
   }
 
-  test('minden szöveg rákerül a vászonra, a fa pedig a kártyán belül marad', () => {
+  test('minden szöveg rákerül a vászonra, a jelenet pedig a kártyán belül marad', () => {
     const written: string[] = []
     const images: number[][] = []
     const gradient = { addColorStop: vi.fn() }
@@ -94,8 +96,9 @@ describe('a kártya rajza', () => {
     expect(x).toBeGreaterThanOrEqual(0)
     expect(x + width).toBeLessThanOrEqual(CARD_WIDTH)
     expect(y + height).toBeLessThanOrEqual(CARD_HEIGHT)
-    // A fa aránya megmarad (100 : 120).
-    expect(height / width).toBeCloseTo(1.2)
+    // A jelenet aránya megmarad (130 : 120), és nem lóg rá a számokra.
+    expect(height / width).toBeCloseTo(120 / 130)
+    expect(y + height).toBeLessThan(1000)
   })
 
   test('a kártya 1080 × 1350 px', () => {

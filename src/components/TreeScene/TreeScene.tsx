@@ -3,8 +3,9 @@ import { useSound } from '../../audio/useSound'
 import { days } from '../../content/days'
 import { useI18n } from '../../i18n/useI18n'
 import { useProgress } from '../../state/useProgress'
-import { TREE_ID } from './geometry'
-import { treePalette } from './palette'
+import { ROOM_VIEWBOX, TREE_ID } from './geometry'
+import { roomPalette, treePalette } from './palette'
+import { RoomBackground, SleepingCat } from './RoomBackdrop'
 import { Tree } from './Tree'
 import styles from './TreeScene.module.css'
 
@@ -15,6 +16,7 @@ const DROP_STAGGER_MS = 180
 const LANDING_MS = 560
 
 const ornaments = days.map((day) => day.ornament)
+const ROOM_BOX = `0 0 ${ROOM_VIEWBOX.width} ${ROOM_VIEWBOX.height}`
 
 function prefersReducedMotion(): boolean {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
@@ -129,15 +131,25 @@ export function TreeScene({ hold, onDecorate }: TreeSceneProps) {
         {t('tree.title')}
       </h2>
       <div ref={ref} className={styles.frame}>
-        <Tree
-          className={styles.tree}
-          ornaments={ornaments}
-          earned={earned}
-          dropping={dropping}
-          lit={complete}
-          palette={treePalette}
-          label={t('tree.label', { n: count })}
-        />
+        {/* A szoba a fa mögött, a cica előtte (hogy a farka a fa alatti takarón feküdjön).
+            A fa a jobb oldalon áll, a rajza változatlan. */}
+        <div className={styles.stage}>
+          <svg className={styles.room} viewBox={ROOM_BOX} aria-hidden="true" focusable="false">
+            <RoomBackground palette={roomPalette} />
+          </svg>
+          <Tree
+            className={styles.tree}
+            ornaments={ornaments}
+            earned={earned}
+            dropping={dropping}
+            lit={complete}
+            palette={treePalette}
+            label={t('tree.label', { n: count })}
+          />
+          <svg className={styles.cat} viewBox={ROOM_BOX} aria-hidden="true" focusable="false">
+            <SleepingCat palette={roomPalette} />
+          </svg>
+        </div>
       </div>
       {complete && <p className={styles.complete}>{t('tree.complete')}</p>}
     </section>

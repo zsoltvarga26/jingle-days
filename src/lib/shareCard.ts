@@ -1,6 +1,7 @@
 import { createElement } from 'react'
-import { TREE_VIEWBOX } from '../components/TreeScene/geometry'
-import { paletteValues, treePalette } from '../components/TreeScene/palette'
+import { ROOM_VIEWBOX, TREE_OFFSET_X, TREE_VIEWBOX } from '../components/TreeScene/geometry'
+import { paletteValues, roomPalette, treePalette } from '../components/TreeScene/palette'
+import { RoomBackground, SleepingCat } from '../components/TreeScene/RoomBackdrop'
 import { Tree } from '../components/TreeScene/Tree'
 import type { Ornament } from '../content/types'
 
@@ -49,18 +50,23 @@ export function displayUrl(url: string): string {
 }
 
 /**
- * A fa SVG-ként, szövegként. Ugyanaz a `Tree` komponens rajzolja, mint az oldalon; a színei
- * attribútumok, ezért képként betöltve (ahol a CSS nem érvényesül) is színes marad.
+ * A jelenet SVG-ként, szövegként: a szoba a kandallóval, előtte a fa, a szőnyegen az alvó cica –
+ * ugyanaz, mint az oldalon. Ugyanazok a komponensek rajzolják; a színeik attribútumok, ezért
+ * képként betöltve (ahol a CSS nem érvényesül) is színes marad, mindig világos változatban.
  */
-export async function treeSvgMarkup(
+export async function sceneSvgMarkup(
   ornaments: readonly Ornament[],
   earned: ReadonlySet<string>,
   width: number,
 ): Promise<string> {
   // Csak a kártya készítésekor töltődik be, nem az oldal indulásakor.
   const { renderToStaticMarkup } = await import('react-dom/server')
-  const height = Math.round((width * TREE_VIEWBOX.height) / TREE_VIEWBOX.width)
-  const markup = renderToStaticMarkup(
+  const height = Math.round((width * ROOM_VIEWBOX.height) / ROOM_VIEWBOX.width)
+
+  const room = renderToStaticMarkup(createElement(RoomBackground, { palette: roomPalette }))
+  const cat = renderToStaticMarkup(createElement(SleepingCat, { palette: roomPalette }))
+  // A fa beágyazott SVG-ként áll a helyén: a saját 100 × 120-as viewBoxa a jelenet x = 30-ánál kezdődik.
+  const tree = renderToStaticMarkup(
     createElement(Tree, {
       ornaments,
       earned,
@@ -68,16 +74,23 @@ export async function treeSvgMarkup(
       palette: treePalette,
       label: '',
     }),
+  ).replace(
+    '<svg ',
+    `<svg x="${TREE_OFFSET_X}" y="0" width="${TREE_VIEWBOX.width}" height="${TREE_VIEWBOX.height}" `,
   )
+
   // A képként betöltött SVG-nek saját méret kell, különben egyes böngészők 0 × 0-ra rajzolják.
-  return markup.replace('<svg ', `<svg width="${width}" height="${height}" `)
+  return (
+    `<svg width="${width}" height="${height}" viewBox="0 0 ${ROOM_VIEWBOX.width} ${ROOM_VIEWBOX.height}" ` +
+    `xmlns="http://www.w3.org/2000/svg">${room}${tree}${cat}</svg>`
+  )
 }
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image()
     image.onload = () => resolve(image)
-    image.onerror = () => reject(new Error('A fa képe nem töltődött be.'))
+    image.onerror = () => reject(new Error('A jelenet képe nem töltődött be.'))
     image.src = src
   })
 }
@@ -178,14 +191,21 @@ function drawStat(ctx: CanvasRenderingContext2D, x: number, value: string, label
   ctx.fillText(label, x + width / 2, y + 162)
 }
 
-/** Megrajzolja a kártyát a vászonra. A fa képe és a betűk már be vannak töltve. */
-export function drawCard(ctx: CanvasRenderingContext2D, text: CardText, tree: CanvasImageSource) {
+/** Megrajzolja a kártyát a vászonra. A jelenet képe és a betűk már be vannak töltve. */
+export function drawCard(ctx: CanvasRenderingContext2D, text: CardText, scene: CanvasImageSource) {
   drawBackground(ctx)
   drawTitle(ctx, text.title)
 
-  const treeWidth = 590
-  const treeHeight = (treeWidth * TREE_VIEWBOX.height) / TREE_VIEWBOX.width
-  ctx.drawImage(tree, (CARD_WIDTH - treeWidth) / 2, 262, treeWidth, treeHeight)
+  // A jelenet (szoba, fa, cica) lekerekített sarkú képként; a fa benne kb. akkora, mint régen.
+  const sceneWidth = 760
+  const sceneHeight = (sceneWidth * ROOM_VIEWBOX.height) / ROOM_VIEWBOX.width
+  const sceneX = (CARD_WIDTH - sceneWidth) / 2
+  const sceneY = 258
+  ctx.save()
+  roundedRect(ctx, sceneX, sceneY, sceneWidth, sceneHeight, 40)
+  ctx.clip()
+  ctx.drawImage(scene, sceneX, sceneY, sceneWidth, sceneHeight)
+  ctx.restore()
 
   drawStat(ctx, 80, text.ornaments, text.ornamentsLabel)
   drawStat(ctx, 560, text.points, text.pointsLabel)
@@ -208,12 +228,13 @@ export async function renderShareCard({ text, ornaments, earned }: CardInput): P
   const ctx = canvas.getContext('2d')
   if (!ctx) throw new Error('A vászon nem érhető el.')
 
-  const svg = await treeSvgMarkup(ornaments, earned, 1180)
-  const [tree] = await Promise.all([
+  // Kétszeres felbontás, hogy a kicsinyítés után is éles maradjon.
+  const svg = await sceneSvgMarkup(ornaments, earned, 1520)
+  const [scene] = await Promise.all([
     loadImage(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`),
     fontsReady(),
   ])
-  drawCard(ctx, text, tree)
+  drawCard(ctx, text, scene)
 
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
   if (!blob) throw new Error('A kép nem készült el.')

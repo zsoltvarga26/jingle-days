@@ -47,6 +47,8 @@ export const paletteTokens = {
   blueDark: '--orn-blue-dark',
   silver: '--orn-silver',
   silverDark: '--orn-silver-dark',
+  inside: '--inside',
+  soot: '--soot',
 } as const
 
 /** A tokenek világos módú értékei. */
@@ -76,6 +78,8 @@ export const paletteValues: Record<keyof typeof paletteTokens, string> = {
   blueDark: '#2f6aa8',
   silver: '#c9d3dc',
   silverDark: '#8f9ba6',
+  inside: '#fff6dc',
+  soot: '#231d22',
 }
 
 const v = paletteValues
@@ -99,6 +103,46 @@ export const treePalette: TreePalette = {
     white: { fill: v.snow, shade: v.snowDark },
   },
 }
+
+/**
+ * A fa mögötti szoba (kandalló, ablak) és az alvó cica színei. Ugyanúgy attribútumként kerülnek
+ * ki, mint a fáé, így a megosztókártyán is színes a jelenet. Az oldalon a sötét módban változó
+ * tokeneket (fal, „z”) a RoomBackdrop.module.css felülírja.
+ */
+export const roomPalette = {
+  wall: v.inside,
+  wallStripe: v.gingerbread,
+  wallDot: v.red,
+  floor: v.trunk,
+  plank: v.soot,
+  baseboard: v.gingerbread,
+  windowFrame: v.snowDark,
+  sky: v.blueDark,
+  snow: v.snow,
+  brick: v.redDark,
+  mortar: v.gingerbread,
+  soot: v.soot,
+  hearth: v.silverDark,
+  log: v.trunk,
+  flame: v.red,
+  flameCore: v.gold,
+  glow: v.gold,
+  mantel: v.gingerbread,
+  mantelEdge: v.trunk,
+  garland: v.treeMid,
+  berry: v.red,
+  gold: v.gold,
+  stocking: v.red,
+  rugEdge: v.goldDark,
+  rug: v.red,
+  ear: v.pink,
+  nose: v.pinkDark,
+  eye: v.silver,
+  whisker: v.silverDark,
+  zzz: v.inkSoft,
+} as const
+
+export type RoomPalette = Record<keyof typeof roomPalette, string>
 
 /**
  * Egyszínű paletta: a dísz sziluettként, egyetlen színnel jelenik meg (pl. a kinyitott ajtó
