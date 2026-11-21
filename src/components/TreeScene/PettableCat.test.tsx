@@ -21,7 +21,7 @@ function setup(sfx = true) {
     </SettingsProvider>,
   )
   const cat = () => container.querySelector('[data-cat]')!.getAttribute('data-cat')
-  const button = screen.getByRole('button', { name: 'Megsimogatom az alvó cicát' })
+  const button = screen.getByRole('button', { name: 'Megsimogatom Lumit, az alvó cicát' })
   return { cat, pet: () => fireEvent.click(button) }
 }
 
@@ -43,12 +43,12 @@ describe('a megsimogatott cica', () => {
     pet()
     expect(cat()).toBe('awake')
     expect(playSfx).toHaveBeenCalledExactlyOnceWith('purr')
-    expect(screen.getByText('Prrr… a cica dorombol')).toBeInTheDocument()
+    expect(screen.getByText('Prrr… Lumi dorombol')).toBeInTheDocument()
 
     // A dorombolás után visszaalszik.
     act(() => vi.advanceTimersByTime(3300))
     expect(cat()).toBe('asleep')
-    expect(screen.queryByText('Prrr… a cica dorombol')).not.toBeInTheDocument()
+    expect(screen.queryByText('Prrr… Lumi dorombol')).not.toBeInTheDocument()
   })
 
   test('nem lehet spammelni: a pihenőidő alatt a simogatás hatástalan', () => {

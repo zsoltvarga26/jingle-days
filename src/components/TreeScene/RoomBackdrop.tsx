@@ -13,6 +13,9 @@ const BRICK_ROWS: readonly [y: number, shift: number][] = [
   [94, 3],
 ]
 
+/** Lumi tálkájának teste (a perem fölötte külön ellipszis). */
+const BOWL_BODY = 'M20 114.8 H33 L31.9 118.7 Q31.75 119.3 31.1 119.3 H21.9 Q21.25 119.3 21.1 118.7 Z'
+
 const FLAKES: readonly [x: number, y: number][] = [
   [10, 15],
   [17, 13],
@@ -229,6 +232,27 @@ export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalett
       {/* Elöl a két fehér mancs. */}
       <ellipse fill={p.snow} cx={10} cy={112.3} rx={1.9} ry={1} />
       <ellipse fill={p.snow} cx={13.8} cy={112.4} rx={1.9} ry={1} />
+      {/* Lumi tálkája a szőnyeg szélén, elöl a nevével. A betűk vonalak, nem szöveg, hogy a
+          megosztókártya képén is betűtípus nélkül megjelenjenek. */}
+      <g data-bowl="">
+        <path fill={p.bowl} d={BOWL_BODY} />
+        <ellipse fill={p.bowlShade} cx={26.5} cy={114.8} rx={6.5} ry={1.1} />
+        <ellipse fill={p.kibble} cx={26.5} cy={114.75} rx={5.4} ry={0.75} />
+        <g fill={p.kibble} stroke={p.bowlShade} strokeWidth={0.12}>
+          <circle cx={24.6} cy={114.3} r={0.45} />
+          <circle cx={26.4} cy={114.15} r={0.5} />
+          <circle cx={28.2} cy={114.35} r={0.45} />
+        </g>
+        <path
+          d="M22.6 115.8 V118.4 H24.1 M24.9 116.9 V117.8 Q24.9 118.45 25.6 118.45 Q26.3 118.45 26.3 117.8 V116.9 M26.3 117.8 V118.4 M27.1 118.4 V116.9 M27.1 117.5 Q27.1 116.9 27.7 116.9 Q28.3 116.9 28.3 117.5 V118.4 M28.3 117.5 Q28.3 116.9 28.9 116.9 Q29.5 116.9 29.5 117.5 V118.4 M30.3 116.9 V118.4"
+          fill="none"
+          stroke={p.bowlText}
+          strokeWidth={0.42}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle fill={p.bowlText} cx={30.3} cy={116.15} r={0.26} />
+      </g>
       {/* Halkan szálló „z” – csak alvás közben, az oldalon, mozgással látszik. */}
       {!awake && (
         <path

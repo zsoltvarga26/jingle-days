@@ -140,6 +140,10 @@ export const roomPalette = {
   eye: v.silver,
   whisker: v.silverDark,
   zzz: v.inkSoft,
+  bowl: v.inside,
+  bowlShade: v.gingerbread,
+  bowlText: v.red,
+  kibble: v.trunk,
 } as const
 
 export type RoomPalette = Record<keyof typeof roomPalette, string>
