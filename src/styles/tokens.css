@@ -37,6 +37,9 @@
   --orn-silver: #c9d3dc;
   --orn-silver-dark: #8f9ba6;
 
+  /* A fa mögötti szoba: a tűztér és a fekete-fehér cica sötét bundája. */
+  --soot: #231d22;
+
   --font: 'Baloo 2', 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
   --radius-door: 16px;
   --radius-board: 28px;

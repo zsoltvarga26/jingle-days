@@ -71,7 +71,8 @@ A vizuális nyelv az A változaté változatlanul: fenyőzöld kalendáriumtábl
 | `--red` | #E2384B | #E2384B | Cím, fő akcentus, hiba |
 | `--gold` | #F5BE3A | #F5BE3A | Kilincs, fókusz, csillagok |
 | `--pink` | #FF9FB2 | #FF9FB2 | Ajtószín |
-| `--inside` | #FFF6DC | #2A1F12 | Ajtó mögötti felület |
+| `--inside` | #FFF6DC | #2A1F12 | Ajtó mögötti felület, a fa mögötti szoba fala |
+| `--soot` | #231D22 | #231D22 | A fa mögötti szoba: a cica fekete bundája, a kandalló tűztere |
 
 **Betűtípus:** Baloo 2 (500, 700, 800) saját kiszolgálással, a `@fontsource/baloo-2` csomagból (`latin` és `latin-ext` részhalmaz az ő/ű miatt), így nem megy kérés harmadik félhez. Tartalék: Nunito, Trebuchet MS, system-ui. A cím 800-as súlyt és rétegzett, arany-zöld szövegárnyékot kap.
 
