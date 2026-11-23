@@ -8,6 +8,7 @@ import { roomPalette, treePalette } from './palette'
 import { PettableCat } from './PettableCat'
 import { RoomBackground } from './RoomBackdrop'
 import { Tree } from './Tree'
+import { TreeInfo } from './TreeInfo'
 import styles from './TreeScene.module.css'
 
 /** Egy dísz leesése és a csillogás ennyi ideig tart; több dísznél ennyivel követik egymást. */
@@ -128,9 +129,12 @@ export function TreeScene({ hold, onDecorate }: TreeSceneProps) {
 
   return (
     <section className={styles.scene} id={TREE_ID} aria-labelledby="tree-title">
-      <h2 id="tree-title" className={styles.title}>
-        {t('tree.title')}
-      </h2>
+      <div className={styles.heading}>
+        <h2 id="tree-title" className={styles.title}>
+          {t('tree.title')}
+        </h2>
+        <TreeInfo />
+      </div>
       <div ref={ref} className={styles.frame}>
         {/* A szoba a fa mögött, a cica előtte (hogy a farka a fa alatti takarón feküdjön).
             A fa a jobb oldalon áll, a rajza változatlan. */}

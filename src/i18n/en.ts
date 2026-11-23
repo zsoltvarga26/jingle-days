@@ -98,6 +98,8 @@ export const en: Record<MessageKey, string> = {
   'tree.label': 'Christmas tree with {n} of 24 ornaments',
   'tree.count': '{n} / 24 ornaments on the tree',
   'tree.complete': 'The tree is finished! Merry Christmas!',
+  'tree.info': 'Good to know',
+  'tree.info.catName': 'Click the cat’s bowl to give the cat a new name.',
   'cat.pet': 'Pet {name}, the sleeping cat',
   'cat.purring': 'Purr… {name} is purring',
   'cat.rename': 'Rename the cat (now: {name})',

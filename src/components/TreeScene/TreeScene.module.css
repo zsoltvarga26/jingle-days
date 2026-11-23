@@ -10,8 +10,19 @@
   scroll-margin-top: 1rem;
 }
 
-.title {
+/* A cím és mellette az „i” gomb egy sorban; a teljes szélesség a tudnivaló buborékáé. */
+.heading {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin: 0 0 0.4rem;
+}
+
+.title {
+  margin: 0;
   font-weight: 800;
   font-size: 1.4rem;
   line-height: 1.1;
