@@ -1,3 +1,5 @@
+import { coatColors, DEFAULT_CAT_COAT, type CatCoat } from '../../lib/catCoat'
+import { bowlLabel } from '../../lib/catName'
 import type { RoomPalette } from './palette'
 import styles from './RoomBackdrop.module.css'
 
@@ -13,8 +15,14 @@ const BRICK_ROWS: readonly [y: number, shift: number][] = [
   [94, 3],
 ]
 
-/** Lajos tálkájának teste (a perem fölötte külön ellipszis). */
+/** A cica tálkájának teste (a perem fölötte külön ellipszis). */
 const BOWL_BODY = 'M20 114.8 H33 L31.9 118.7 Q31.75 119.3 31.1 119.3 H21.9 Q21.25 119.3 21.1 118.7 Z'
+
+/** Cirmos bundán a csíkok: ívek a háton és a combon, „M” a homlokon, gyűrűk a farkon. */
+const BODY_STRIPES =
+  'M17.9 103.4 Q18.4 104.9 17.8 106.4 M21 103 Q21.5 104.7 20.9 106.3 M24.1 103.4 Q24.6 104.8 24.3 106.2 M27.2 104.5 Q28 105.6 27.7 106.9'
+const HEAD_STRIPES = 'M10.9 104 L11.2 105.3 M12 103.7 V105.2 M13.1 104 L12.8 105.3'
+const TAIL_STRIPES = 'M32.4 106.9 L32.6 108.8 M35.2 108.3 L36.9 109.3 M35.1 111.3 L36.8 111.9'
 
 const FLAKES: readonly [x: number, y: number][] = [
   [10, 15],
@@ -165,33 +173,80 @@ export function RoomBackground({ palette: p }: { palette: RoomPalette }) {
  * Alvó fekete-fehér cica a szőnyegen, a feje a mancsain. A fa előtti rétegben van, hogy a
  * farka a fa alatti fehér takarón feküdjön, ne alatta. Szuszog, és néha megrebbenti a farkát.
  * Ha `awake`, kinyitja a szemét (megsimogatták, dorombol).
+ *
+ * A `coat` a bunda: alapból a fekete-fehér; a cirmosokon csíkok is vannak.
+ *
+ * A `name` a tálka elejére kerül szövegként. A megosztókártya jelenete név nélkül készül, mert
+ * képként betöltve a betűtípus nem érhető el; ott a kártya a vászonra írja a nevet ugyanide.
  */
-export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalette; awake?: boolean }) {
+export function SleepingCat({
+  palette: p,
+  awake = false,
+  name,
+  coat = DEFAULT_CAT_COAT,
+}: {
+  palette: RoomPalette
+  awake?: boolean
+  name?: string
+  coat?: CatCoat
+}) {
+  const label = name ? bowlLabel(name) : null
+  const c = coatColors(coat)
   return (
-    <g data-cat={awake ? 'awake' : 'asleep'}>
+    <g data-cat={awake ? 'awake' : 'asleep'} data-coat={coat}>
       <g className={styles.tail}>
         <path
           d="M28.5 107.8 C34 107.5 37.5 109.6 35.6 112.2 C34.5 113.6 31.8 113.4 31.2 112.2"
           fill="none"
-          stroke={p.soot}
+          stroke={c.fur}
           strokeWidth={2.4}
           strokeLinecap="round"
         />
-        <circle fill={p.snow} cx={31.3} cy={112.2} r={1.15} />
+        {c.stripes && (
+          <path
+            d={TAIL_STRIPES}
+            fill="none"
+            stroke={c.stripes}
+            strokeWidth={0.7}
+            strokeLinecap="round"
+            data-cat-stripes=""
+          />
+        )}
+        <circle fill={c.bib} cx={31.3} cy={112.2} r={1.15} />
       </g>
       <g className={styles.breathe}>
-        <ellipse fill={p.soot} cx={21} cy={108} rx={9.5} ry={5.4} />
-        <ellipse fill={p.snow} cx={16.6} cy={111.2} rx={3.6} ry={1.9} />
-        <path fill={p.soot} d="M25 104.5 Q28.5 105.5 29.5 109.5 Q27 112.5 22 113 Z" />
+        <ellipse fill={c.fur} cx={21} cy={108} rx={9.5} ry={5.4} />
+        <ellipse fill={c.bib} cx={16.6} cy={111.2} rx={3.6} ry={1.9} />
+        <path fill={c.fur} d="M25 104.5 Q28.5 105.5 29.5 109.5 Q27 112.5 22 113 Z" />
+        {c.stripes && (
+          <path
+            d={BODY_STRIPES}
+            fill="none"
+            stroke={c.stripes}
+            strokeWidth={0.8}
+            strokeLinecap="round"
+            data-cat-stripes=""
+          />
+        )}
       </g>
-      {/* Fej: fülek, fehér pofa, csukott szem, rózsaszín orr. */}
-      <path fill={p.soot} d="M7.7 106.5 L8.3 101.4 L11.6 103.6 Z" />
-      <path fill={p.soot} d="M12.6 103.3 L15.6 101.3 L16.3 106 Z" />
-      <ellipse fill={p.soot} cx={12} cy={107.6} rx={4.6} ry={4.1} />
+      {/* Fej: fülek, pofa (a fekete-fehér cicán fehér), csukott szem, rózsaszín orr. */}
+      <path fill={c.fur} d="M7.7 106.5 L8.3 101.4 L11.6 103.6 Z" />
+      <path fill={c.fur} d="M12.6 103.3 L15.6 101.3 L16.3 106 Z" />
+      <ellipse fill={c.fur} cx={12} cy={107.6} rx={4.6} ry={4.1} />
       <path fill={p.ear} d="M8.6 104.6 L8.9 102.6 L10.5 103.7 Z" />
       <path fill={p.ear} d="M13.6 103.7 L15.2 102.6 L15.5 104.6 Z" />
+      {c.stripes && (
+        <path
+          d={HEAD_STRIPES}
+          fill="none"
+          stroke={c.stripes}
+          strokeWidth={0.5}
+          strokeLinecap="round"
+          data-cat-stripes=""
+        />
+      )}
       <path
-        fill={p.snow}
+        fill={c.bib}
         d="M12 106.6 C10.4 106.6 9 108.4 8.7 109.6 C8.6 111 10.2 111.7 12 111.7 C13.8 111.7 15.4 111 15.3 109.6 C15 108.4 13.6 106.6 12 106.6 Z"
       />
       {awake ? (
@@ -207,7 +262,7 @@ export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalett
         <path
           d="M9.3 106.9 Q10.2 107.7 11.1 106.9 M12.9 106.9 Q13.8 107.7 14.7 106.9"
           fill="none"
-          stroke={p.eye}
+          stroke={c.eye}
           strokeWidth={0.4}
           strokeLinecap="round"
         />
@@ -225,15 +280,14 @@ export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalett
       <path
         d="M10.6 109.3 L6.6 108.7 M10.6 109.8 L6.8 110.3 M13.4 109.3 L17.4 108.7 M13.4 109.8 L17.2 110.3"
         fill="none"
-        stroke={p.whisker}
+        stroke={c.whisker}
         strokeWidth={0.18}
         strokeLinecap="round"
       />
-      {/* Elöl a két fehér mancs. */}
-      <ellipse fill={p.snow} cx={10} cy={112.3} rx={1.9} ry={1} />
-      <ellipse fill={p.snow} cx={13.8} cy={112.4} rx={1.9} ry={1} />
-      {/* Lajos tálkája a szőnyeg szélén, elöl a nevével. A betűk vonalak, nem szöveg, hogy a
-          megosztókártya képén is betűtípus nélkül megjelenjenek. */}
+      {/* Elöl a két mancs (a fekete-fehér cicán fehér). */}
+      <ellipse fill={c.bib} cx={10} cy={112.3} rx={1.9} ry={1} />
+      <ellipse fill={c.bib} cx={13.8} cy={112.4} rx={1.9} ry={1} />
+      {/* A cica tálkája a szőnyeg szélén, elöl a nevével. */}
       <g data-bowl="">
         <path fill={p.bowl} d={BOWL_BODY} />
         <ellipse fill={p.bowlShade} cx={26.5} cy={114.8} rx={6.5} ry={1.1} />
@@ -243,15 +297,19 @@ export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalett
           <circle cx={26.4} cy={114.15} r={0.5} />
           <circle cx={28.2} cy={114.35} r={0.45} />
         </g>
-        <path
-          d="M22.25 115.8 V118.4 H23.55 M25.55 116.9 V118.4 M25.55 117.65 Q25.55 116.9 24.9 116.9 Q24.25 116.9 24.25 117.65 Q24.25 118.4 24.9 118.4 Q25.55 118.4 25.55 117.65 M26.85 116.9 V118.55 Q26.85 118.95 26.35 118.95 M28.2 116.9 Q28.85 116.9 28.85 117.65 Q28.85 118.4 28.2 118.4 Q27.55 118.4 27.55 117.65 Q27.55 116.9 28.2 116.9 Z M30.6 117.15 Q30.35 116.9 30.05 116.9 Q29.55 116.9 29.55 117.3 Q29.55 117.65 30.1 117.65 Q30.65 117.65 30.65 118 Q30.65 118.4 30.15 118.4 Q29.8 118.4 29.55 118.15"
-          fill="none"
-          stroke={p.bowlText}
-          strokeWidth={0.42}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <circle fill={p.bowlText} cx={26.85} cy={116.15} r={0.26} />
+        {name && label && (
+          <text
+            className={styles.bowlName}
+            x={label.x}
+            y={label.y}
+            fontSize={label.fontSize}
+            textAnchor="middle"
+            fill={p.bowlText}
+            data-bowl-name=""
+          >
+            {name}
+          </text>
+        )}
       </g>
       {/* Halkan szálló „z” – csak alvás közben, az oldalon, mozgással látszik. */}
       {!awake && (

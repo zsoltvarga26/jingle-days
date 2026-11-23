@@ -12,6 +12,7 @@ import {
   type CardText,
 } from '../../lib/shareCard'
 import { totalScore } from '../../state/score'
+import { useSettings } from '../../state/useSettings'
 import { useProgress } from '../../state/useProgress'
 import controls from '../../styles/controls.module.css'
 import { Modal } from '../Modal/Modal'
@@ -28,6 +29,7 @@ type Card =
 export function ShareCard({ onClose }: { onClose: () => void }) {
   const { t, tn, lang } = useI18n()
   const { state } = useProgress()
+  const { catName, catCoat } = useSettings().settings
   const score = totalScore(days, state)
 
   const url = pageUrl()
@@ -41,10 +43,11 @@ export function ShareCard({ onClose }: { onClose: () => void }) {
       quiz: t('share.card.quiz', { correct: score.quizCorrect, total: score.quizTotal }),
       puzzles: t('share.card.puzzles', { solved: score.puzzlesSolved, total: score.puzzlesTotal }),
       url: displayUrl(url),
+      catName,
     }),
     // A szövegek a nyelvtől és az eredménytől függenek.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [lang, url, score.ornaments, score.points, score.quizCorrect, score.puzzlesSolved],
+    [lang, url, catName, score.ornaments, score.points, score.quizCorrect, score.puzzlesSolved],
   )
   const message = t('share.text', { ornaments: score.ornaments, points: score.points, url })
 
@@ -62,7 +65,7 @@ export function ShareCard({ onClose }: { onClose: () => void }) {
     let objectUrl: string | undefined
     const earned = new Set(earnedKey === '' ? [] : earnedKey.split(','))
 
-    renderShareCard({ text, ornaments, earned })
+    renderShareCard({ text, ornaments, earned, catCoat })
       .then((file) => {
         if (cancelled) return
         objectUrl = URL.createObjectURL(file)
@@ -76,7 +79,7 @@ export function ShareCard({ onClose }: { onClose: () => void }) {
       cancelled = true
       if (objectUrl) URL.revokeObjectURL(objectUrl)
     }
-  }, [text, earnedKey])
+  }, [text, earnedKey, catCoat])
 
   const [notice, setNotice] = useState('')
   const copy = async () => {

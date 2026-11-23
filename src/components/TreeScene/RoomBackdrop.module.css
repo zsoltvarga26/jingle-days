@@ -120,3 +120,11 @@
     opacity: 0;
   }
 }
+
+/* A cica neve a tálkán: a szín SVG-attribútumként jön, a betű az oldal betűje. */
+.bowlName {
+  font-family: var(--font);
+  font-weight: 800;
+  pointer-events: none;
+  user-select: none;
+}

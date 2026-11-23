@@ -4,6 +4,8 @@ import { paletteValues, roomPalette, treePalette } from '../components/TreeScene
 import { RoomBackground, SleepingCat } from '../components/TreeScene/RoomBackdrop'
 import { Tree } from '../components/TreeScene/Tree'
 import type { Ornament } from '../content/types'
+import { DEFAULT_CAT_COAT, type CatCoat } from './catCoat'
+import { bowlLabel } from './catName'
 
 /**
  * A megosztható eredménykártya: 1080 × 1350 px-es PNG, amit a böngésző Canvas API-ja rajzol,
@@ -27,6 +29,8 @@ export interface CardText {
   puzzles: string
   /** Az oldal címe, hogy mások is kipróbálhassák. */
   url: string
+  /** A cica neve a tálkán. */
+  catName: string
 }
 
 export interface CardInput {
@@ -34,6 +38,8 @@ export interface CardInput {
   ornaments: readonly Ornament[]
   /** A megnyitott napok díszeinek azonosítói. */
   earned: ReadonlySet<string>
+  /** A cica bundája, ahogy az oldalon látszik. */
+  catCoat?: CatCoat
 }
 
 const c = paletteValues
@@ -58,13 +64,16 @@ export async function sceneSvgMarkup(
   ornaments: readonly Ornament[],
   earned: ReadonlySet<string>,
   width: number,
+  catCoat: CatCoat = DEFAULT_CAT_COAT,
 ): Promise<string> {
   // Csak a kártya készítésekor töltődik be, nem az oldal indulásakor.
   const { renderToStaticMarkup } = await import('react-dom/server')
   const height = Math.round((width * ROOM_VIEWBOX.height) / ROOM_VIEWBOX.width)
 
   const room = renderToStaticMarkup(createElement(RoomBackground, { palette: roomPalette }))
-  const cat = renderToStaticMarkup(createElement(SleepingCat, { palette: roomPalette }))
+  const cat = renderToStaticMarkup(
+    createElement(SleepingCat, { palette: roomPalette, coat: catCoat }),
+  )
   // A fa beágyazott SVG-ként áll a helyén: a saját 100 × 120-as viewBoxa a jelenet x = 30-ánál kezdődik.
   const tree = renderToStaticMarkup(
     createElement(Tree, {
@@ -207,6 +216,16 @@ export function drawCard(ctx: CanvasRenderingContext2D, text: CardText, scene: C
   ctx.drawImage(scene, sceneX, sceneY, sceneWidth, sceneHeight)
   ctx.restore()
 
+  // A cica neve a tálkára: a jelenet képe szöveg nélkül készül (lásd SleepingCat), ezért itt,
+  // a már betöltött Baloo 2 betűvel kerül rá, pontosan oda, ahová az oldalon.
+  const unit = sceneWidth / ROOM_VIEWBOX.width
+  const label = bowlLabel(text.catName)
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillStyle = roomPalette.bowlText
+  ctx.font = `800 ${label.fontSize * unit}px ${FONT}`
+  ctx.fillText(text.catName, sceneX + label.x * unit, sceneY + label.y * unit)
+
   drawStat(ctx, 80, text.ornaments, text.ornamentsLabel)
   drawStat(ctx, 560, text.points, text.pointsLabel)
 
@@ -221,7 +240,12 @@ export function drawCard(ctx: CanvasRenderingContext2D, text: CardText, scene: C
 }
 
 /** Elkészíti a kártyát PNG fájlként. Hibát dob, ha a böngésző nem tud vászonra rajzolni. */
-export async function renderShareCard({ text, ornaments, earned }: CardInput): Promise<File> {
+export async function renderShareCard({
+  text,
+  ornaments,
+  earned,
+  catCoat,
+}: CardInput): Promise<File> {
   const canvas = document.createElement('canvas')
   canvas.width = CARD_WIDTH
   canvas.height = CARD_HEIGHT
@@ -229,7 +253,7 @@ export async function renderShareCard({ text, ornaments, earned }: CardInput): P
   if (!ctx) throw new Error('A vászon nem érhető el.')
 
   // Kétszeres felbontás, hogy a kicsinyítés után is éles maradjon.
-  const svg = await sceneSvgMarkup(ornaments, earned, 1520)
+  const svg = await sceneSvgMarkup(ornaments, earned, 1520, catCoat)
   const [scene] = await Promise.all([
     loadImage(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`),
     fontsReady(),

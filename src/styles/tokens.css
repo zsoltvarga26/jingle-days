@@ -40,6 +40,16 @@
   /* A fa mögötti szoba: a tűztér és a fekete-fehér cica sötét bundája. */
   --soot: #231d22;
 
+  /* A választható cicabundák (a fehér és a szürke a meglévő tokenekből jön). A vörös
+     sárgásabb narancs, mint a piros szőnyeg, hogy elváljon tőle; a sötétebbek a csíkok.
+     A bézs egyszínű, csíkok nélküli világosbarna. */
+  --cat-ginger: #f0a04b;
+  --cat-ginger-dark: #c2641c;
+  --cat-gray-dark: #5c656e;
+  --cat-brown: #b38b63;
+  --cat-brown-dark: #6f4d31;
+  --cat-beige: #d8b88e;
+
   --font: 'Baloo 2', 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
   --radius-door: 16px;
   --radius-board: 28px;

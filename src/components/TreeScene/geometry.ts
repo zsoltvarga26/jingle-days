@@ -10,3 +10,9 @@ export const TREE_ID = 'tree'
  */
 export const ROOM_VIEWBOX = { width: 130, height: 120 } as const
 export const TREE_OFFSET_X = 30
+
+/**
+ * A cica nevének helye a tálka elején, a szoba koordinátáiban: a vízszintes közép, a betűk
+ * függőleges közepe és a rendelkezésre álló szélesség. Az oldal és a megosztókártya is ezt használja.
+ */
+export const BOWL_LABEL = { x: 26.5, cy: 117.1, width: 9.4 } as const

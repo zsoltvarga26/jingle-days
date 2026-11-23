@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest'
+import { paletteValues } from '../components/TreeScene/palette'
 import { days } from '../content/days'
 import {
   CARD_HEIGHT,
@@ -56,6 +57,22 @@ describe('a jelenet képe a kártyához', () => {
   })
 })
 
+describe('a cica bundája a kártyán', () => {
+  test('alapból a fekete-fehér cica kerül rá, csíkok nélkül', async () => {
+    const svg = await sceneSvgMarkup(ornaments, new Set(), 650)
+    expect(svg).toContain('data-coat="tuxedo"')
+    expect(svg).not.toContain('data-cat-stripes')
+  })
+
+  test('a választott cirmos bunda a színeivel és a csíkjaival', async () => {
+    const svg = await sceneSvgMarkup(ornaments, new Set(), 650, 'ginger')
+    expect(svg).toContain('data-coat="ginger"')
+    expect(svg).toContain(`fill="${paletteValues.catGinger}"`)
+    expect(svg).toContain(`stroke="${paletteValues.catGingerDark}"`)
+    expect(svg).toContain('data-cat-stripes')
+  })
+})
+
 describe('a kártya rajza', () => {
   const text: CardText = {
     title: 'Advent 2026',
@@ -66,6 +83,7 @@ describe('a kártya rajza', () => {
     quiz: 'Kvíz: 52 / 74',
     puzzles: 'Rejtvény: 9 / 25',
     url: 'advent.example',
+    catName: 'Cirmi',
   }
 
   test('minden szöveg rákerül a vászonra, a jelenet pedig a kártyán belül marad', () => {
@@ -86,7 +104,7 @@ describe('a kártya rajza', () => {
 
     drawCard(ctx, text, {} as CanvasImageSource)
 
-    for (const value of ['Advent 2026', '18 / 24', 'dísz a fán', '61', 'pont', 'advent.example']) {
+    for (const value of ['Advent 2026', '18 / 24', 'dísz a fán', '61', 'pont', 'advent.example', 'Cirmi']) {
       expect(written, value).toContain(value)
     }
     expect(written.some((line) => line.includes('Kvíz: 52 / 74') && line.includes('Rejtvény: 9 / 25'))).toBe(true)
