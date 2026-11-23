@@ -93,6 +93,7 @@ describe('beállítások', () => {
       sfx: true,
       music: false,
       musicVolume: 0.3,
+      catName: 'Lajos',
     })
   })
 
@@ -104,7 +105,14 @@ describe('beállítások', () => {
   })
 
   test('a mentett beállítás visszatöltődik', () => {
-    const saved = { lang: 'en', theme: 'dark', sfx: false, music: true, musicVolume: 0.8 } as const
+    const saved = {
+      lang: 'en',
+      theme: 'dark',
+      sfx: false,
+      music: true,
+      musicVolume: 0.8,
+      catName: 'Cirmi',
+    } as const
     saveSettings(saved)
     expect(loadSettings()).toEqual(saved)
   })
@@ -113,7 +121,14 @@ describe('beállítások', () => {
     vi.spyOn(window.navigator, 'language', 'get').mockReturnValue('hu')
     window.localStorage.setItem(
       SETTINGS_KEY,
-      JSON.stringify({ lang: 'fr', theme: 'lila', sfx: 'igen', music: true, musicVolume: 7 }),
+      JSON.stringify({
+        lang: 'fr',
+        theme: 'lila',
+        sfx: 'igen',
+        music: true,
+        musicVolume: 7,
+        catName: '   ',
+      }),
     )
     expect(loadSettings()).toEqual({
       lang: 'hu',
@@ -121,13 +136,18 @@ describe('beállítások', () => {
       sfx: true,
       music: true,
       musicVolume: 1,
+      catName: 'Lajos',
     })
+
+    // A túl hosszú nevet levágja, a szóközöket rendbe teszi.
+    window.localStorage.setItem(SETTINGS_KEY, JSON.stringify({ catName: '  Bolyhos   Pamacs ' }))
+    expect(loadSettings().catName).toBe('Bolyhos Pa')
 
     window.localStorage.setItem(SETTINGS_KEY, 'nem json')
     expect(loadSettings().lang).toBe('hu')
   })
 
-  test('a téma nélküli régi beállítás betölt, a téma a rendszert követi', () => {
+  test('a téma és név nélküli régi beállítás betölt: a téma a rendszert követi, a cica Lajos', () => {
     window.localStorage.setItem(
       SETTINGS_KEY,
       JSON.stringify({ lang: 'en', sfx: false, music: true, musicVolume: 0.5 }),
@@ -138,14 +158,22 @@ describe('beállítások', () => {
       sfx: false,
       music: true,
       musicVolume: 0.5,
+      catName: 'Lajos',
     })
   })
 
   test('az előrehaladás és a beállítások külön kulcson élnek', () => {
-    saveSettings({ lang: 'en', theme: 'auto', sfx: false, music: false, musicVolume: 0.3 })
+    saveSettings({
+      lang: 'en',
+      theme: 'auto',
+      sfx: false,
+      music: false,
+      musicVolume: 0.3,
+      catName: 'Cirmi',
+    })
     saveSave(sampleSave())
     window.localStorage.removeItem(SAVE_KEY)
-    expect(loadSettings().lang).toBe('en')
+    expect(loadSettings()).toMatchObject({ lang: 'en', catName: 'Cirmi' })
     expect(loadSave()).toEqual(emptySave())
   })
 })

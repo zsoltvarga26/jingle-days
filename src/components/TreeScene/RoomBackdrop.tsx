@@ -1,3 +1,4 @@
+import { bowlLabel } from '../../lib/catName'
 import type { RoomPalette } from './palette'
 import styles from './RoomBackdrop.module.css'
 
@@ -13,7 +14,7 @@ const BRICK_ROWS: readonly [y: number, shift: number][] = [
   [94, 3],
 ]
 
-/** Lajos tálkájának teste (a perem fölötte külön ellipszis). */
+/** A cica tálkájának teste (a perem fölötte külön ellipszis). */
 const BOWL_BODY = 'M20 114.8 H33 L31.9 118.7 Q31.75 119.3 31.1 119.3 H21.9 Q21.25 119.3 21.1 118.7 Z'
 
 const FLAKES: readonly [x: number, y: number][] = [
@@ -165,8 +166,20 @@ export function RoomBackground({ palette: p }: { palette: RoomPalette }) {
  * Alvó fekete-fehér cica a szőnyegen, a feje a mancsain. A fa előtti rétegben van, hogy a
  * farka a fa alatti fehér takarón feküdjön, ne alatta. Szuszog, és néha megrebbenti a farkát.
  * Ha `awake`, kinyitja a szemét (megsimogatták, dorombol).
+ *
+ * A `name` a tálka elejére kerül szövegként. A megosztókártya jelenete név nélkül készül, mert
+ * képként betöltve a betűtípus nem érhető el; ott a kártya a vászonra írja a nevet ugyanide.
  */
-export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalette; awake?: boolean }) {
+export function SleepingCat({
+  palette: p,
+  awake = false,
+  name,
+}: {
+  palette: RoomPalette
+  awake?: boolean
+  name?: string
+}) {
+  const label = name ? bowlLabel(name) : null
   return (
     <g data-cat={awake ? 'awake' : 'asleep'}>
       <g className={styles.tail}>
@@ -232,8 +245,7 @@ export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalett
       {/* Elöl a két fehér mancs. */}
       <ellipse fill={p.snow} cx={10} cy={112.3} rx={1.9} ry={1} />
       <ellipse fill={p.snow} cx={13.8} cy={112.4} rx={1.9} ry={1} />
-      {/* Lajos tálkája a szőnyeg szélén, elöl a nevével. A betűk vonalak, nem szöveg, hogy a
-          megosztókártya képén is betűtípus nélkül megjelenjenek. */}
+      {/* A cica tálkája a szőnyeg szélén, elöl a nevével. */}
       <g data-bowl="">
         <path fill={p.bowl} d={BOWL_BODY} />
         <ellipse fill={p.bowlShade} cx={26.5} cy={114.8} rx={6.5} ry={1.1} />
@@ -243,15 +255,19 @@ export function SleepingCat({ palette: p, awake = false }: { palette: RoomPalett
           <circle cx={26.4} cy={114.15} r={0.5} />
           <circle cx={28.2} cy={114.35} r={0.45} />
         </g>
-        <path
-          d="M22.25 115.8 V118.4 H23.55 M25.55 116.9 V118.4 M25.55 117.65 Q25.55 116.9 24.9 116.9 Q24.25 116.9 24.25 117.65 Q24.25 118.4 24.9 118.4 Q25.55 118.4 25.55 117.65 M26.85 116.9 V118.55 Q26.85 118.95 26.35 118.95 M28.2 116.9 Q28.85 116.9 28.85 117.65 Q28.85 118.4 28.2 118.4 Q27.55 118.4 27.55 117.65 Q27.55 116.9 28.2 116.9 Z M30.6 117.15 Q30.35 116.9 30.05 116.9 Q29.55 116.9 29.55 117.3 Q29.55 117.65 30.1 117.65 Q30.65 117.65 30.65 118 Q30.65 118.4 30.15 118.4 Q29.8 118.4 29.55 118.15"
-          fill="none"
-          stroke={p.bowlText}
-          strokeWidth={0.42}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <circle fill={p.bowlText} cx={26.85} cy={116.15} r={0.26} />
+        {name && label && (
+          <text
+            className={styles.bowlName}
+            x={label.x}
+            y={label.y}
+            fontSize={label.fontSize}
+            textAnchor="middle"
+            fill={p.bowlText}
+            data-bowl-name=""
+          >
+            {name}
+          </text>
+        )}
       </g>
       {/* Halkan szálló „z” – csak alvás közben, az oldalon, mozgással látszik. */}
       {!awake && (

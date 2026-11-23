@@ -1,4 +1,5 @@
 import { isLang, type Lang } from '../content/types'
+import { DEFAULT_CAT_NAME, normalizeCatName } from '../lib/catName'
 
 /** Megjelenés: 'auto' a rendszer beállítását követi, amíg a játékos nem választ. */
 export type Theme = 'auto' | 'light' | 'dark'
@@ -18,6 +19,8 @@ export interface Settings {
   music: boolean
   /** 0–1. */
   musicVolume: number
+  /** A cica neve a tálkán és a feliratokban; régebbi mentésből hiányzik, ilyenkor az alapnév. */
+  catName: string
 }
 
 /** A böngésző nyelve alapján magyar, egyébként angol. */
@@ -32,6 +35,7 @@ export function defaultSettings(navigatorLanguage?: string): Settings {
     sfx: true,
     music: false,
     musicVolume: 0.3,
+    catName: DEFAULT_CAT_NAME,
   }
 }
 
@@ -49,5 +53,6 @@ export function sanitizeSettings(raw: unknown, defaults: Settings): Settings {
       typeof volume === 'number' && Number.isFinite(volume)
         ? Math.min(1, Math.max(0, volume))
         : defaults.musicVolume,
+    catName: normalizeCatName(data.catName) ?? defaults.catName,
   }
 }

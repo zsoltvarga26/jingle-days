@@ -265,6 +265,8 @@ export interface Settings {    // külön kulcson: advent-2026:settings
   sfx: boolean;                // hangeffektek, alapértelmezés: be
   music: boolean;              // háttérzene, alapértelmezés: ki
   musicVolume: number;         // 0–1, alapértelmezés: 0.3
+  theme: 'auto' | 'light' | 'dark'; // alapértelmezés: 'auto' (a rendszer beállítása)
+  catName: string;             // a cica neve, legfeljebb 10 karakter, alapértelmezés: 'Lajos'
 }
 ```
 

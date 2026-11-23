@@ -4,6 +4,7 @@ import { paletteValues, roomPalette, treePalette } from '../components/TreeScene
 import { RoomBackground, SleepingCat } from '../components/TreeScene/RoomBackdrop'
 import { Tree } from '../components/TreeScene/Tree'
 import type { Ornament } from '../content/types'
+import { bowlLabel } from './catName'
 
 /**
  * A megosztható eredménykártya: 1080 × 1350 px-es PNG, amit a böngésző Canvas API-ja rajzol,
@@ -27,6 +28,8 @@ export interface CardText {
   puzzles: string
   /** Az oldal címe, hogy mások is kipróbálhassák. */
   url: string
+  /** A cica neve a tálkán. */
+  catName: string
 }
 
 export interface CardInput {
@@ -206,6 +209,16 @@ export function drawCard(ctx: CanvasRenderingContext2D, text: CardText, scene: C
   ctx.clip()
   ctx.drawImage(scene, sceneX, sceneY, sceneWidth, sceneHeight)
   ctx.restore()
+
+  // A cica neve a tálkára: a jelenet képe szöveg nélkül készül (lásd SleepingCat), ezért itt,
+  // a már betöltött Baloo 2 betűvel kerül rá, pontosan oda, ahová az oldalon.
+  const unit = sceneWidth / ROOM_VIEWBOX.width
+  const label = bowlLabel(text.catName)
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillStyle = roomPalette.bowlText
+  ctx.font = `800 ${label.fontSize * unit}px ${FONT}`
+  ctx.fillText(text.catName, sceneX + label.x * unit, sceneY + label.y * unit)
 
   drawStat(ctx, 80, text.ornaments, text.ornamentsLabel)
   drawStat(ctx, 560, text.points, text.pointsLabel)

@@ -66,6 +66,7 @@ describe('a kártya rajza', () => {
     quiz: 'Kvíz: 52 / 74',
     puzzles: 'Rejtvény: 9 / 25',
     url: 'advent.example',
+    catName: 'Cirmi',
   }
 
   test('minden szöveg rákerül a vászonra, a jelenet pedig a kártyán belül marad', () => {
@@ -86,7 +87,7 @@ describe('a kártya rajza', () => {
 
     drawCard(ctx, text, {} as CanvasImageSource)
 
-    for (const value of ['Advent 2026', '18 / 24', 'dísz a fán', '61', 'pont', 'advent.example']) {
+    for (const value of ['Advent 2026', '18 / 24', 'dísz a fán', '61', 'pont', 'advent.example', 'Cirmi']) {
       expect(written, value).toContain(value)
     }
     expect(written.some((line) => line.includes('Kvíz: 52 / 74') && line.includes('Rejtvény: 9 / 25'))).toBe(true)

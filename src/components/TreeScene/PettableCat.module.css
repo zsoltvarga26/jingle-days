@@ -29,6 +29,120 @@
   outline-offset: 2px;
 }
 
+/* Láthatatlan gomb a tálka fölött (x 20–33, y 113.4–119.4): rákattintva átnevezhető a cica.
+   Egérrel fölé állva szaggatott arany keret jelzi, hogy kattintható. */
+.bowl {
+  position: absolute;
+  left: calc(20 / 130 * 100%);
+  top: calc(113.4 / 120 * 100%);
+  width: calc(13 / 130 * 100%);
+  height: calc(6 / 120 * 100%);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .bowl:hover {
+    outline: 2px dashed var(--gold);
+    outline-offset: 1px;
+  }
+}
+
+.bowl:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Az átnevező a tálka fölött, a szőnyeg és a fa alja előtt. A felülete mindig világos (snow). */
+.editor {
+  position: absolute;
+  z-index: 2;
+  left: calc(2 / 130 * 100%);
+  bottom: calc(7.5 / 120 * 100%);
+  display: grid;
+  gap: 4px;
+  width: max-content;
+  max-width: calc(100% - 4px);
+  padding: 8px 10px 10px;
+  border-radius: 16px;
+  background: var(--snow);
+  color: var(--pine-dark);
+  box-shadow:
+    0 3px 0 var(--gold),
+    0 8px 20px var(--shadow);
+  text-align: left;
+}
+
+.label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+.input {
+  width: 11ch;
+  min-width: 0;
+  padding: 3px 8px 1px;
+  border: 2px solid var(--pine);
+  border-radius: 10px;
+  background: var(--snow);
+  color: var(--pine-dark);
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.hint {
+  max-width: 17em;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  color: var(--on-snow-soft);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.save,
+.cancel {
+  min-height: 2rem;
+  padding: 2px 12px 0;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.save {
+  border: 0;
+  background: var(--pine);
+  color: var(--snow);
+  box-shadow: 0 3px 0 var(--pine-dark);
+}
+
+.cancel {
+  border: 2px solid transparent;
+  background: transparent;
+  color: var(--on-snow-soft);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.input:focus-visible,
+.save:focus-visible,
+.cancel:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
 /* A „Prrr…” buborék a cica feje fölött. Üresen nem látszik, de az élő régió megmarad. */
 .bubble {
   position: absolute;
