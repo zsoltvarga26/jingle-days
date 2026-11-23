@@ -267,6 +267,7 @@ export interface Settings {    // külön kulcson: advent-2026:settings
   musicVolume: number;         // 0–1, alapértelmezés: 0.3
   theme: 'auto' | 'light' | 'dark'; // alapértelmezés: 'auto' (a rendszer beállítása)
   catName: string;             // a cica neve, legfeljebb 10 karakter, alapértelmezés: 'Lajos'
+  catCoat: 'tuxedo' | 'white' | 'ginger' | 'gray' | 'brown' | 'beige'; // a bundája, alapértelmezés: 'tuxedo'
 }
 ```
 

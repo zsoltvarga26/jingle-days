@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest'
+import { paletteValues } from '../components/TreeScene/palette'
 import { days } from '../content/days'
 import {
   CARD_HEIGHT,
@@ -53,6 +54,22 @@ describe('a jelenet képe a kártyához', () => {
     // Érvényes XML, hogy képként betölthető legyen.
     const doc = new DOMParser().parseFromString(svg, 'image/svg+xml')
     expect(doc.querySelector('parsererror')).toBeNull()
+  })
+})
+
+describe('a cica bundája a kártyán', () => {
+  test('alapból a fekete-fehér cica kerül rá, csíkok nélkül', async () => {
+    const svg = await sceneSvgMarkup(ornaments, new Set(), 650)
+    expect(svg).toContain('data-coat="tuxedo"')
+    expect(svg).not.toContain('data-cat-stripes')
+  })
+
+  test('a választott cirmos bunda a színeivel és a csíkjaival', async () => {
+    const svg = await sceneSvgMarkup(ornaments, new Set(), 650, 'ginger')
+    expect(svg).toContain('data-coat="ginger"')
+    expect(svg).toContain(`fill="${paletteValues.catGinger}"`)
+    expect(svg).toContain(`stroke="${paletteValues.catGingerDark}"`)
+    expect(svg).toContain('data-cat-stripes')
   })
 })
 

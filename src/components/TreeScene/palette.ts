@@ -49,6 +49,12 @@ export const paletteTokens = {
   silverDark: '--orn-silver-dark',
   inside: '--inside',
   soot: '--soot',
+  catGinger: '--cat-ginger',
+  catGingerDark: '--cat-ginger-dark',
+  catGrayDark: '--cat-gray-dark',
+  catBrown: '--cat-brown',
+  catBrownDark: '--cat-brown-dark',
+  catBeige: '--cat-beige',
 } as const
 
 /** A tokenek világos módú értékei. */
@@ -80,6 +86,12 @@ export const paletteValues: Record<keyof typeof paletteTokens, string> = {
   silverDark: '#8f9ba6',
   inside: '#fff6dc',
   soot: '#231d22',
+  catGinger: '#f0a04b',
+  catGingerDark: '#c2641c',
+  catGrayDark: '#5c656e',
+  catBrown: '#b38b63',
+  catBrownDark: '#6f4d31',
+  catBeige: '#d8b88e',
 }
 
 const v = paletteValues

@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { I18nProvider } from '../../i18n/I18nContext'
 import { SettingsProvider } from '../../state/SettingsContext'
@@ -23,8 +23,10 @@ function setup(sfx = true, extra: Record<string, unknown> = {}) {
   const cat = () => container.querySelector('[data-cat]')!.getAttribute('data-cat')
   const bowlName = () => container.querySelector('[data-bowl-name]')?.textContent ?? null
   const pet = () => fireEvent.click(screen.getByRole('button', { name: /^Megsimogatom az alvó cicát/ }))
-  const bowl = () => screen.getByRole('button', { name: /^A cica nevének átírása/ })
-  return { cat, pet, bowl, bowlName }
+  const bowl = () => screen.getByRole('button', { name: /^A cica nevének és bundájának módosítása/ })
+  const coat = () => container.querySelector('[data-cat]')!.getAttribute('data-coat')
+  const stripes = () => container.querySelectorAll('[data-cat-stripes]').length
+  return { cat, pet, bowl, bowlName, coat, stripes }
 }
 
 const savedName = () => JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).catName
@@ -96,7 +98,7 @@ describe('a cica átnevezése a tálkán', () => {
   test('alapból Lajos a neve, és ez áll a tálkán', () => {
     const { bowl, bowlName } = setup()
     expect(bowlName()).toBe('Lajos')
-    expect(bowl()).toHaveAccessibleName('A cica nevének átírása (most: Lajos)')
+    expect(bowl()).toHaveAccessibleName('A cica nevének és bundájának módosítása (most: Lajos)')
     expect(bowl()).toHaveAttribute('aria-expanded', 'false')
   })
 
@@ -117,7 +119,7 @@ describe('a cica átnevezése a tálkán', () => {
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
     expect(bowlName()).toBe('Cirmi')
     expect(savedName()).toBe('Cirmi')
-    expect(bowl()).toHaveAccessibleName('A cica nevének átírása (most: Cirmi)')
+    expect(bowl()).toHaveAccessibleName('A cica nevének és bundájának módosítása (most: Cirmi)')
     expect(bowl()).toHaveFocus()
     expect(screen.getByRole('button', { name: 'Megsimogatom az alvó cicát (Cirmi)' })).toBeInTheDocument()
   })
@@ -154,5 +156,55 @@ describe('a cica átnevezése a tálkán', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Mentés' }))
     expect(bowlName()).toBe('Lajos')
     expect(savedName()).toBe('Lajos')
+  })
+})
+
+describe('a cica bundája', () => {
+  test('alapból fekete-fehér, csíkok nélkül', () => {
+    const { coat, stripes } = setup()
+    expect(coat()).toBe('tuxedo')
+    expect(stripes()).toBe(0)
+  })
+
+  test('a mentett bundával töltődik be; a cirmos csíkos', () => {
+    const { coat, stripes } = setup(true, { catCoat: 'brown' })
+    expect(coat()).toBe('brown')
+    expect(stripes()).toBeGreaterThan(0)
+  })
+
+  test('a szerkesztőben mind a hat bunda választható, a jelenlegi kijelölve', () => {
+    const { bowl } = setup(true, { catCoat: 'white' })
+    fireEvent.click(bowl())
+    const group = screen.getByRole('group', { name: 'Bunda' })
+    const names = ['Fekete-fehér', 'Hófehér', 'Vörös cirmos', 'Szürke cirmos', 'Barna cirmos', 'Bézs']
+    for (const name of names) expect(within(group).getByRole('radio', { name })).toBeInTheDocument()
+    expect(within(group).getByRole('radio', { name: 'Hófehér' })).toBeChecked()
+  })
+
+  test('választáskor azonnal átszíneződik, Mentésre elmentődik', () => {
+    const { bowl, coat } = setup()
+    fireEvent.click(bowl())
+    fireEvent.click(screen.getByRole('radio', { name: 'Vörös cirmos' }))
+    expect(coat()).toBe('ginger')
+    expect(window.localStorage.getItem(SETTINGS_KEY)).not.toContain('ginger')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Mentés' }))
+    expect(coat()).toBe('ginger')
+    expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).catCoat).toBe('ginger')
+  })
+
+  test('Mégsére és Escape-re visszaáll a korábbi bunda', () => {
+    const { bowl, coat } = setup(true, { catCoat: 'gray' })
+    fireEvent.click(bowl())
+    fireEvent.click(screen.getByRole('radio', { name: 'Hófehér' }))
+    expect(coat()).toBe('white')
+    fireEvent.click(screen.getByRole('button', { name: 'Mégse' }))
+    expect(coat()).toBe('gray')
+
+    fireEvent.click(bowl())
+    fireEvent.click(screen.getByRole('radio', { name: 'Barna cirmos' }))
+    fireEvent.keyDown(screen.getByRole('radio', { name: 'Barna cirmos' }), { key: 'Escape' })
+    expect(coat()).toBe('gray')
+    expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY)!).catCoat).toBe('gray')
   })
 })

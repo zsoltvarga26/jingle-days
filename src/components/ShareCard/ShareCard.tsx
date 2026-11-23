@@ -29,7 +29,7 @@ type Card =
 export function ShareCard({ onClose }: { onClose: () => void }) {
   const { t, tn, lang } = useI18n()
   const { state } = useProgress()
-  const { catName } = useSettings().settings
+  const { catName, catCoat } = useSettings().settings
   const score = totalScore(days, state)
 
   const url = pageUrl()
@@ -65,7 +65,7 @@ export function ShareCard({ onClose }: { onClose: () => void }) {
     let objectUrl: string | undefined
     const earned = new Set(earnedKey === '' ? [] : earnedKey.split(','))
 
-    renderShareCard({ text, ornaments, earned })
+    renderShareCard({ text, ornaments, earned, catCoat })
       .then((file) => {
         if (cancelled) return
         objectUrl = URL.createObjectURL(file)
@@ -79,7 +79,7 @@ export function ShareCard({ onClose }: { onClose: () => void }) {
       cancelled = true
       if (objectUrl) URL.revokeObjectURL(objectUrl)
     }
-  }, [text, earnedKey])
+  }, [text, earnedKey, catCoat])
 
   const [notice, setNotice] = useState('')
   const copy = async () => {

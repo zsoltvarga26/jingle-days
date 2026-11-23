@@ -58,15 +58,17 @@
   outline-offset: 2px;
 }
 
-/* Az átnevező a tálka fölött, a szőnyeg és a fa alja előtt. A felülete mindig világos (snow). */
+/* A szerkesztő a cica fölött, a kandalló előtt: alatta a cica és a tálka látható marad, így
+   bundaválasztáskor látszik, ahogy átszíneződik. A felülete mindig világos (snow). */
 .editor {
   position: absolute;
   z-index: 2;
   left: calc(2 / 130 * 100%);
-  bottom: calc(7.5 / 120 * 100%);
+  bottom: calc(22 / 120 * 100%);
   display: grid;
   gap: 4px;
   width: max-content;
+  min-width: min(14rem, calc(100% - 4px));
   max-width: calc(100% - 4px);
   padding: 8px 10px 10px;
   border-radius: 16px;
@@ -85,7 +87,7 @@
 }
 
 .input {
-  width: 11ch;
+  width: 100%;
   min-width: 0;
   padding: 3px 8px 1px;
   border: 2px solid var(--pine);
@@ -104,7 +106,98 @@
   color: var(--on-snow-soft);
 }
 
+/* Bundaválasztó: kerek színminták, a cirmosok csíkosak. A választógomb maga láthatatlan,
+   de billentyűzettel (nyilakkal) is működik; a fókusz és a kijelölés a mintán látszik. */
+.coats {
+  margin: 2px 0 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.coats legend {
+  padding: 0;
+  margin-bottom: 4px;
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.option {
+  position: relative;
+  display: grid;
+  cursor: pointer;
+}
+
+.radio {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.swatch {
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  border: 2px solid var(--snow-dark);
+  box-shadow: inset 0 0 0 2px var(--snow);
+}
+
+.radio:checked + .swatch {
+  border-color: var(--pine);
+  box-shadow:
+    inset 0 0 0 2px var(--snow),
+    0 0 0 2px var(--pine);
+}
+
+.radio:focus-visible + .swatch {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.swatch[data-coat='tuxedo'] {
+  background: linear-gradient(135deg, var(--soot) 55%, var(--snow) 55%);
+}
+
+.swatch[data-coat='white'] {
+  background: var(--snow);
+}
+
+.swatch[data-coat='ginger'] {
+  background: repeating-linear-gradient(
+    120deg,
+    var(--cat-ginger) 0 5px,
+    var(--cat-ginger-dark) 5px 7px
+  );
+}
+
+.swatch[data-coat='gray'] {
+  background: repeating-linear-gradient(
+    120deg,
+    var(--orn-silver-dark) 0 5px,
+    var(--cat-gray-dark) 5px 7px
+  );
+}
+
+.swatch[data-coat='brown'] {
+  background: repeating-linear-gradient(
+    120deg,
+    var(--cat-brown) 0 5px,
+    var(--cat-brown-dark) 5px 7px
+  );
+}
+
+.swatch[data-coat='beige'] {
+  background: var(--cat-beige);
+}
+
 .actions {
+  margin-top: 2px;
   display: flex;
   align-items: center;
   gap: 6px;

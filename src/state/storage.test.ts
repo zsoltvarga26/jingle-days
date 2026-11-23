@@ -94,6 +94,7 @@ describe('beállítások', () => {
       music: false,
       musicVolume: 0.3,
       catName: 'Lajos',
+      catCoat: 'tuxedo',
     })
   })
 
@@ -112,6 +113,7 @@ describe('beállítások', () => {
       music: true,
       musicVolume: 0.8,
       catName: 'Cirmi',
+      catCoat: 'ginger',
     } as const
     saveSettings(saved)
     expect(loadSettings()).toEqual(saved)
@@ -128,6 +130,7 @@ describe('beállítások', () => {
         music: true,
         musicVolume: 7,
         catName: '   ',
+        catCoat: 'calico',
       }),
     )
     expect(loadSettings()).toEqual({
@@ -137,6 +140,7 @@ describe('beállítások', () => {
       music: true,
       musicVolume: 1,
       catName: 'Lajos',
+      catCoat: 'tuxedo',
     })
 
     // A túl hosszú nevet levágja, a szóközöket rendbe teszi.
@@ -147,7 +151,7 @@ describe('beállítások', () => {
     expect(loadSettings().lang).toBe('hu')
   })
 
-  test('a téma és név nélküli régi beállítás betölt: a téma a rendszert követi, a cica Lajos', () => {
+  test('a téma és cica nélküli régi beállítás betölt: a téma a rendszert követi, a cica fekete-fehér Lajos', () => {
     window.localStorage.setItem(
       SETTINGS_KEY,
       JSON.stringify({ lang: 'en', sfx: false, music: true, musicVolume: 0.5 }),
@@ -159,6 +163,7 @@ describe('beállítások', () => {
       music: true,
       musicVolume: 0.5,
       catName: 'Lajos',
+      catCoat: 'tuxedo',
     })
   })
 
@@ -170,10 +175,11 @@ describe('beállítások', () => {
       music: false,
       musicVolume: 0.3,
       catName: 'Cirmi',
+      catCoat: 'gray',
     })
     saveSave(sampleSave())
     window.localStorage.removeItem(SAVE_KEY)
-    expect(loadSettings()).toMatchObject({ lang: 'en', catName: 'Cirmi' })
+    expect(loadSettings()).toMatchObject({ lang: 'en', catName: 'Cirmi', catCoat: 'gray' })
     expect(loadSave()).toEqual(emptySave())
   })
 })

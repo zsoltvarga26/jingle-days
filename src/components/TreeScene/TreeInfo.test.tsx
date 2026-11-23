@@ -5,7 +5,7 @@ import { SettingsProvider } from '../../state/SettingsContext'
 import { SETTINGS_KEY } from '../../state/storage'
 import { TreeInfo } from './TreeInfo'
 
-const TEXT = 'Kattints a cica tálkájára, és átnevezheted a cicát.'
+const TEXT = 'Kattints a cica tálkájára: átnevezheted, és kiválaszthatod a bundája színét.'
 
 function setup(lang: 'hu' | 'en' = 'hu') {
   window.localStorage.setItem(
@@ -68,6 +68,6 @@ describe('a fa melletti „i” gomb', () => {
   test('angolul is', () => {
     const button = setup('en')
     fireEvent.click(button)
-    expect(screen.getByRole('note')).toHaveTextContent('Click the cat’s bowl to give the cat a new name.')
+    expect(screen.getByRole('note')).toHaveTextContent('Click the cat’s bowl to give the cat a new name and pick its coat colour.')
   })
 })
